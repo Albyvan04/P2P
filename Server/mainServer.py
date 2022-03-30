@@ -8,6 +8,7 @@ s.listen(10)
 
 while True:
     conn, addr = s.accept()
+    print("connesso")
     pid = os.fork()
     if pid==0:
       conn.close()
