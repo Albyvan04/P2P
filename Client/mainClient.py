@@ -1,26 +1,10 @@
+from Classi.client import Client
+from Classi.utilities import Utilities
 import socket
 import sys
 import random
 
-def formatIp(IP):
-    ipSplitted = IP.split('.')
-    i= 0
-    while(i < len(ipSplitted)):
-        ipSplitted[i] = '%03d' % int(ipSplitted[i])
-        i += 1
-    return '.'.join(ipSplitted)
-
-
-
-def login(socket, portaClient, ipClient):
-    request = "LOGI" + ipClient + portaClient
-    print(bytes(request))
-    #s.send(bytes(request))
-
-
-    
 # Verifica dei dati immessi
-print(len(sys.argv))
 
 if (len(sys.argv) != 2):
     print("\nI parametri passati non sono corretti.\nFormato nomeFile ipServer.")
@@ -36,13 +20,15 @@ try:
 except:
     print("Errore di connessione al server")
     exit(0)
-finally:
+else:
     print("Connesso al server")
 
-ipClient = s.getsockname()[0]
-portaClient = random.randint(50000,52000)
+ipClient = Utilities.formatIp(s.getsockname()[0])
+portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
 
-login(s, formatIp(ipClient), portaClient)
+sessionID = Client.login(s, ipClient, portaClient)
+
+print(sessionID)
 
 s.close()
 
