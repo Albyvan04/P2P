@@ -1,11 +1,10 @@
-from multiprocessing import connection
 import psycopg2
 import peer
 
 DB_NAME = "ProvaDB"
-USERNAME = ""
-PASSWORD = ""
-SERVER_PORT = "80"
+USERNAME = "albyvan04"
+PASSWORD = "admin"
+SERVER_PORT = "5432"
 
 class ORM:
     
@@ -16,10 +15,12 @@ class ORM:
         except Exception as ex:
             print(ex.__str__())
 
-    def selectPeer(ip, port):
-        query = "SELECT * FROM PEER WHERE IP_PEER = %s AND PORT_PEER = %s" %(ip, port)
-        cursor = connection.cursor()
-        cursor.execute(query)
+    #def selectPeer(ip, port):
+    #    query = "SELECT * FROM PEER WHERE IP_PEER = %s AND PORT_PEER = %s" %(ip, port)
+    #    cursor = connection.cursor()
+    #    cursor.execute(query)
+    #    user = cursor.fetchall()
+    #    peer = Peer(user[0]["SESSION_ID"], user[1]["IP_PEER"], )
 
-
+orm = ORM("25.72.89.220")
 
