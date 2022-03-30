@@ -1,35 +1,34 @@
+from Classi.client import Client
+from Classi.utilities import Utilities
 import socket
 import sys
 import random
 
-#def login(portaClient, ipClent):
-    
 # Verifica dei dati immessi
-print(len(sys.argv))
 
 if (len(sys.argv) != 2):
     print("\nI parametri passati non sono corretti.\nFormato nomeFile ipServer.")
     exit(0)
 
-portaServer = 50000
+PORTASERVER = 50000
 ipServer = sys.argv[1]
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
-    s.connect((ipServer, portaServer))
+    s.connect((ipServer, PORTASERVER))
 except:
     print("Errore di connessione al server")
     exit(0)
-finally:
+else:
     print("Connesso al server")
 
-hostname = socket.gethostname()
-ipClient = s.getsockname()
-portaClient = random.randint(50000,52000)
+ipClient = Utilities.formatIp(s.getsockname()[0])
+portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
 
-print(ipClient, portaClient)
+sessionID = Client.login(s, ipClient, portaClient)
 
+print(sessionID)
 
 s.close()
 
