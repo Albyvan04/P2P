@@ -9,8 +9,10 @@ s.bind(('', 50000))
 s.listen(10)
 
 while True:
+
     clientSocket, clientAddress = s.accept()
     print("Request accepted")
+
     pid = os.fork()
     if pid==0:
 
