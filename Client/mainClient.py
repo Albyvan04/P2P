@@ -24,8 +24,8 @@ except:
 finally:
     print("Connesso al server")
 
-hostname = s.gethostname()
-ipClient = s.gethostbyname(hostname)
+hostname = socket.gethostname()
+ipClient = s.getsockname()
 portaClient = random.randint(50000,52000)
 
 print(ipClient, portaClient)
