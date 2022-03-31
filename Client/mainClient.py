@@ -10,7 +10,7 @@ if (len(sys.argv) != 2):
     print("\nI parametri passati non sono corretti.\nFormato nomeFile ipServer.")
     exit(0)
 
-PORTASERVER = 50000
+PORTASERVER = 50001
 ipServer = sys.argv[1]
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -28,7 +28,18 @@ portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
 
 sessionID = Client.login(s, ipClient, portaClient)
 
-print(sessionID)
+Client.showMenu()
+
+option = int(input())
+
+while(option!= 5):
+
+    if(option == 1):
+        Client.addFile(s, sessionID)
+
+    Client.showMenu()
+
+    option = int(input())
 
 s.close()
 
