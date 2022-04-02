@@ -3,11 +3,11 @@ import json
 
 try: 
 
-    filename = "config.json"
+    filename = "Classi/config.json"
     with open(filename, "r") as dictionary:
         configDict = json.load(dictionary)
 
-    filename = "query.json"
+    filename = "Classi/query.json"
     with open(filename, "r") as dictionary:
         queryDict = json.load(dictionary)
 

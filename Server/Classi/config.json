@@ -1,0 +1,1 @@
+{"DEFAULT_DB_NAME": "postgres", "DB_NAME": "napster", "USER": "postgres", "PSW": "password", "IP": "localhost", "PORT": "5432"}

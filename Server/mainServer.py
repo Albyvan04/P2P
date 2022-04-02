@@ -3,11 +3,16 @@ import socket
 from Classi.server import Server
 from Classi.utilitiesServer import Utilities
 
+try:
+    exec(open(os.path.dirname(__file__) + "/Classi/script.py").read())
+except Exception as ex:
+    print("%s" %ex)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.bind(('', 50001))
 s.listen(10)
+print("In ascolto...")
 
 while True:
 
