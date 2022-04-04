@@ -28,8 +28,6 @@ while True:
 
         request = str(clientSocket.recv(4096).decode())
 
-        #print(len(request.encode()))
-
         if(request[0:4] == "LOGI"):
           Server.login(clientSocket)
           print("Login")

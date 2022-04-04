@@ -1,6 +1,7 @@
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
+from Classi.peer import Peer
 import socket
 import sys
 import random
@@ -13,6 +14,7 @@ if (len(sys.argv) != 2):
     exit(0)
 
 PORTASERVER = 50001
+CHUNKLEN = 2048
 ipServer = sys.argv[1]
 
 #memorizzo i file nella cartella da condividere
@@ -33,7 +35,8 @@ else:
     print("Connesso al server")
 
 ipClient = Utilities.formatIp(s.getsockname()[0])
-portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
+#portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
+portaClient = "53000"
 
 sessionID = Client.login(s, ipClient, portaClient)
 
@@ -55,7 +58,32 @@ if(pid != 0):
         elif(option == 3):
             Client.searchFile(s, sessionID)
         elif(option == 4):
-            Client.download(s, sessionID)
+            serverDownload = Client.download(s, sessionID)
+
+            socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            try:
+                socketDownload.connect((socketDownload.ip, socketDownload.port))
+            except:
+                print("Errore di connessione al servizio di download")
+                exit(0)
+            else:
+                print("Connesso al servizio di download")
+
+            request = "RETR" + "34d11ba4649ef93621ca742e2d21add9"
+            socketDownload.send(request.encode())
+
+            fd = os.open("prova.txt", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o777)
+
+            print("Ricezione di %s" % "prova.txt")
+
+            while True:
+                response = socketDownload.recv(4096).decode()
+                buf = response[15 : 15 + CHUNKLEN]
+                if not buf:
+                    break
+                os.write(fd, buf)
+            
         elif(option == 5):
             Client.logout(s, sessionID)
 
@@ -70,7 +98,7 @@ else:
 
     socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    socketDownload.bind(('', portaClient))
+    socketDownload.bind(('', int(portaClient)))
     socketDownload.listen(10)
     print("In ascolto di richieste di download...")
 
@@ -82,19 +110,29 @@ else:
         #gestione download concorrente
         pid = os.fork()
         if pid == 0:
-            
+        
+            request = str(peerSocket.recv(4096).decode())
 
-            # fd = os.open(filename, os.O_RDONLY)
+            if(request[0 : 4] == "RETR"):
 
-            while True:
-                buf = os.read(fd, 4096)
-                if not buf:
-                    break
-                peerSocket.send(buf)
+                md5 = request[4 : 36]
 
-            os.close(fd)
-            s.close()
+                for file in files:
+                    if(file.fileMd5 == md5):
+                        filename = file.fileName
 
+                fd = os.open("sharedFiles/" + filename, os.O_RDONLY)
+
+                chunkIndex = 0
+                while True:
+                    buf = os.read(fd, CHUNKLEN)
+                    if not buf:
+                        break
+                    request = "ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN) + buf
+                    peerSocket.send(request.encode())
+                    chunkIndex += 1
+
+                os.close(fd)
             
         print("Connessione chiusa\n")
         peerSocket.close()

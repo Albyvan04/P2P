@@ -3,6 +3,7 @@ import os
 from urllib import request
 from .file import File
 from .utilities import Utilities
+from .peer import Peer
 
 class Client:
 
@@ -15,9 +16,8 @@ class Client:
 
     @staticmethod
     def addFile(socket, sessionID, files):
-        files = []
         for file in files:
-            request = "ADDF" + sessionID + file.fileMd5 + Utilities.formatString(file.fileName, 100)
+            request = "ADDF" + sessionID + file.fileMd5 + file.fileName
             socket.send(request.encode())
             response = socket.recv(4096).decode()
             print("File aggiunto") if response[0: 4] == "AADD" else exit("Server add file failed")
@@ -33,7 +33,9 @@ class Client:
 
     @staticmethod
     def download(socket, sessionId):
-        return ""
+        #effettuare una ricerca e far selezionare il peer da cui fare download
+        #segnalazione al server dell'operazione
+        return Peer("127.0.0.1", 53000)
 
     @staticmethod
     def logout(socket, sessionId):

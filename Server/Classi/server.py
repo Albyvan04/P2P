@@ -9,24 +9,24 @@ class Server:
         socket.send(("ALGI" + Utilities.generateSessionID()).encode())
 
     @staticmethod
-    def addFile(socket):
+    def addFile(socket, request):
         #aggiungere in database
         socket.send(("AADD").encode()) #manca attributo
 
     @staticmethod
-    def removeFile(socket, sessionId):
+    def removeFile(socket, request):
         return ""
     
     @staticmethod
-    def searchFile(socket, sessionId):
+    def searchFile(socket,  request):
         return ""
 
     @staticmethod
-    def download(socket, sessionId):
+    def download(socket, request):
         return ""
 
     @staticmethod
-    def logout(socket, sessionId):
+    def logout(socket, request):
         #rimuovo da database
         socket.send(("ALGO").encode()) #manca attributo
 
