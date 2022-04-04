@@ -48,27 +48,27 @@ try:
     #tabella peer
     tabellaPeer = queryDict["CREATETAB_PEER"]
     cursor.execute(tabellaPeer)
-    print("Tabella Peer creata con successo")   
+    print("Tabella Peer")   
 
     #tabella log
     tabellaLog = queryDict["CREATETAB_LOG"]
     cursor.execute(tabellaLog)
-    print("Tabella Log creata con successo")
+    print("Tabella Log")
 
     #tabella file
     tabellaFile = queryDict["CREATETAB_FILE"]
     cursor.execute(tabellaFile)
-    print("Tabella File creata con successo")
+    print("Tabella File")
     
     #tabella peer_file
     tabellaPeer_File = queryDict["CREATETAB_FILE_PEER"]
     cursor.execute(tabellaPeer_File)
-    print("Tabella Peer_File creata con successo")
+    print("Tabella Peer_File")
 
     #tabella download
     tabellaDownload = queryDict["CREATETAB_DOWNLOAD"]
     cursor.execute(tabellaDownload)
-    print("Tabella Download creata con successo")
+    print("Tabella Download")
 
 except Exception as ex:
     print("%s" %ex)

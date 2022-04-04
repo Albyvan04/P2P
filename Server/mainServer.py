@@ -34,16 +34,16 @@ while True:
           Server.login(clientSocket)
           print("Login")
         elif(request[0:4] == "ADDF"):
-          Server.addFile(clientSocket)
+          Server.addFile(clientSocket, request)
           print("AddFile")
         elif(request[0:4] == "DELF"):
-          Server.removeFile(clientSocket)
+          Server.removeFile(clientSocket, request)
         elif(request[0:4] == "FIND"):
-          Server.searchFile(clientSocket)
+          Server.searchFile(clientSocket, request)
         elif(request[0:4] == "RETR"):
-          Server.download(clientSocket)
+          Server.download(clientSocket, request)
         elif(request[0:4] == "LOGO"):
-          Server.logout(clientSocket)
+          Server.logout(clientSocket, request)
           continueCicle = False
 
 
