@@ -25,7 +25,27 @@ class Client:
             socket.send(request.encode())
             response = socket.recv(4096).decode()
             print("File aggiunto") if response[0: 4] == "AADD" else exit("Server add file failed")
+
+
+    @staticmethod
+    def removeFile(socket, sessionId):
+        return ""
     
+    @staticmethod
+    def searchFile(socket, sessionId):
+        return ""
+
+    @staticmethod
+    def download(socket, sessionId):
+        return ""
+
+    @staticmethod
+    def logout(socket, sessionId):
+        request = "LOGO" + sessionId
+        socket.send(request.encode())
+        response = socket.recv(4096).decode()
+        print("Logout effettuato") if response[0: 4] == "ALGO" else exit("Server logout failed")
+
 
     @staticmethod
     def showMenu():

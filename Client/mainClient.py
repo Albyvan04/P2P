@@ -36,6 +36,15 @@ while(option!= 5):
 
     if(option == 1):
         Client.addFile(s, sessionID)
+    elif(option == 2):
+        Client.removeFile(s, sessionID)
+    elif(option == 3):
+        Client.searchFile(s, sessionID)
+    elif(option == 4):
+        Client.download(s, sessionID)
+    elif(option == 5):
+        Client.logout(s, sessionID)
+
 
     Client.showMenu()
 

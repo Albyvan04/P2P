@@ -11,7 +11,7 @@ class Server:
     @staticmethod
     def addFile(socket):
         #aggiungere in database
-        socket.send(("AADD").encode())
+        socket.send(("AADD").encode()) #manca attributo
 
     @staticmethod
     def removeFile(socket, sessionId):
@@ -27,6 +27,8 @@ class Server:
 
     @staticmethod
     def logout(socket, sessionId):
-        return ""
+        #rimuovo da database
+        socket.send(("ALGO").encode()) #manca attributo
+
 
     
