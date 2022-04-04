@@ -1,17 +1,24 @@
-from multiprocessing import connection
 import psycopg2
+import json
 import peer
-
-DB_NAME = "ProvaDB"
-USERNAME = ""
-PASSWORD = ""
-SERVER_PORT = "80"
 
 class ORM:
     
     def __init__(self, ip):
         try:
-            connection = psycopg2.connect(database = DB_NAME, user = USERNAME, password = PASSWORD, host = ip, port = SERVER_PORT)
+
+            filename = "config.json"
+            with open(filename, "r") as dictionary:
+                configDict = json.load(dictionary)
+
+            connection = psycopg2.connect(
+                database = configDict["DB_NAME"], 
+                user = configDict["USER"], 
+                password = configDict["PSW"], 
+                host = configDict["IP"], 
+                port = configDict["PORT"]
+                )
+            
             connection.autocommit = True
         except Exception as ex:
             print(ex.__str__())
@@ -22,6 +29,7 @@ class ORM:
         cursor = connection.cursor()
         try:
             cursor.execute(query)
+            #cursor.fetchall()
         except Exception as ex:
             print(ex.__str__())
 
@@ -30,6 +38,7 @@ class ORM:
         cursor = connection.cursor()
         try:
             cursor.execute(query)
+            #cursor.fetchall()
         except Exception as ex:
             print(ex.__str__())
 
