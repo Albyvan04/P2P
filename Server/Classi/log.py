@@ -1,7 +1,7 @@
 class Log:
-    def __init__(self, ID, sessionID, tipo_operazione, data, ora):
-        self.ID = ID
+    
+    def __init__(self, sessionID, tipo_operazione, data, ora):
         self.sessionID = sessionID
-        self.tipo_operazione = {'LOGI':'Login', 'ADDF':'Aggiunta', 'DELF':'Rimozione', 'FIND':'Ricerca', 'RETR':'Download', 'LOGO':'Logout'}
+        self.tipo_operazione = tipo_operazione
         self.data = data
         self.ora = ora

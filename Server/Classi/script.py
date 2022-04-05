@@ -3,14 +3,17 @@ import json
 
 try: 
 
+    #lettura file json di configurazione server db
     filename = "Classi/config.json"
     with open(filename, "r") as dictionary:
         configDict = json.load(dictionary)
 
+    #lettura file json di query creazione db
     filename = "Classi/query.json"
     with open(filename, "r") as dictionary:
         queryDict = json.load(dictionary)
 
+    #connessione al server db
     connessione = psycopg2.connect(
         database = configDict["DEFAULT_DB_NAME"],
         user = configDict["USER"],

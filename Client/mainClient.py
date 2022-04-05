@@ -22,8 +22,10 @@ for fileName in filesName:
     fileMd5 = Utilities.get_md5(fileName)
     files.append(File(fileName, fileMd5))       
 
+#creazione socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+#connessione al server
 try:
     s.connect((ipServer, PORTASERVER))
 except:
@@ -32,6 +34,7 @@ except:
 else:
     print("Connesso al server")
 
+#formattazione ip e porta client
 ipClient = Utilities.formatIp(s.getsockname()[0])
 portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
 
@@ -46,16 +49,25 @@ if(pid != 0):
 
     option = int(input())
 
-    while(option!= 5):
+    while(option != 5):
 
+        #ADD FILE
         if(option == 1):
             Client.addFile(s, sessionID, files)
+
+        #REMOVE FILE
         elif(option == 2):
             Client.removeFile(s, sessionID)
+
+        #SEARCH FILE
         elif(option == 3):
             Client.searchFile(s, sessionID)
+
+        #DOWNLOAD FILE
         elif(option == 4):
             Client.download(s, sessionID)
+
+        #LOGOUT
         elif(option == 5):
             Client.logout(s, sessionID)
 
@@ -68,6 +80,7 @@ if(pid != 0):
 
 else:
 
+    #creazione socket per download
     socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     socketDownload.bind(('', portaClient))
@@ -76,21 +89,24 @@ else:
 
     while True:
 
+        #connessione con peer
         peerSocket, clientAddress = socketDownload.accept()
         print("Richiesta accettata")
 
         #gestione download concorrente
         pid = os.fork()
-        if pid == 0:
+        if (pid == 0):
             
-
-            # fd = os.open(filename, os.O_RDONLY)
-
+            #ricezione richiesta
             while True:
                 buf = os.read(fd, 4096)
                 if not buf:
                     break
                 peerSocket.send(buf)
+
+            #spedizione file
+
+            # fd = os.open(filename, os.O_RDONLY)
 
             os.close(fd)
             s.close()

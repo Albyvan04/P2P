@@ -1,8 +1,8 @@
 import socket
 import os
 from urllib import request
-from .file import File
-from .utilities import Utilities
+from file import File
+from utilities import Utilities
 
 class Client:
 
@@ -45,5 +45,12 @@ class Client:
 
     @staticmethod
     def showMenu():
-        menu = "\n= = = = = = = = =\n     M E N Ù\n= = = = = = = = =\n1)Aggiungi file\n2)Rimuovi file\n3)Cerca file\n4)Download\n5)Logout\nScegli una opzione: "
-        print(menu)
+        print("\n= = = = = = = = =")
+        print("\n     M E N Ù     ")
+        print("\n= = = = = = = = =")
+        print("\n1) Aggiungi file")
+        print("\n2) Rimuovi file")
+        print("\n3) Cerca file")
+        print("\n4) Download")
+        print("\n5) Logout")
+        print("\nScegli una opzione: ")
