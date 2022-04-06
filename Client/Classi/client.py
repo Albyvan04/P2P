@@ -1,8 +1,9 @@
 import socket
 import os
 from urllib import request
-from file import File
-from utilities import Utilities
+from .file import File
+from .utilities import Utilities
+from .peer import Peer
 
 class Client:
 
@@ -33,7 +34,10 @@ class Client:
 
     @staticmethod
     def download(socket, sessionId):
-        return ""
+        #effettuare una ricerca e far selezionare il peer da cui fare download
+        #segnalazione al server dell'operazione
+        return Peer("192.168.2.96", 53000)
+
 
     @staticmethod
     def logout(socket, sessionId):

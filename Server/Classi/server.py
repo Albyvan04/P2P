@@ -1,6 +1,6 @@
 import socket
-from peer import Peer
-from orm import ORM
+from .peer import Peer
+from .orm import ORM
 from .utilitiesServer import Utilities
 
 class Server:
@@ -50,7 +50,7 @@ class Server:
     def logout(request):
         sessionId = request[4:20]
         try:
-            orm.deletePeer(sessionId)
+            ORM.deletePeer(sessionId)
             #finire il pacchetto
             return True
         except Exception as ex:
