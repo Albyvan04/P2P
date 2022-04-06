@@ -7,6 +7,10 @@ import sys
 import random
 import os
 
+#ARGV
+#ARGV[0] = null
+#ARGV[1] = IP SERVER
+
 # Verifica dei dati immessi
 
 if (len(sys.argv) != 2):
