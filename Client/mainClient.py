@@ -1,3 +1,4 @@
+from ctypes import sizeof
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -17,7 +18,7 @@ if (len(sys.argv) != 2):
     print("\nI parametri passati non sono corretti.\nFormato nomeFile ipServer.")
     exit(0)
 
-PORTASERVER = 50001
+PORTASERVER = 80
 CHUNKLEN = 2048
 ipServer = sys.argv[1]
 
@@ -26,6 +27,7 @@ files = []
 filesName = os.listdir("sharedFiles")
 for fileName in filesName:
     fileMd5 = Utilities.get_md5(fileName)
+    print(fileMd5)
     files.append(File(fileName, fileMd5))       
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -129,15 +131,17 @@ else:
 
                 chunkIndex = 0
                 while True:
-                    buf = os.read(fd, CHUNKLEN)
+                    buf = os.read(fd, CHUNKLEN).decode()
                     if not buf:
                         break
                     request = "ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN) + buf
-                    peerSocket.send(request.encode())
+                    print(request)
+                    print(request.encode())
+                    peerSocket.send(request.encode(), CHUNKLEN + 15)
                     chunkIndex += 1
 
                 os.close(fd)
             
-        print("Connessione chiusa\n")
-        peerSocket.close()
-        os._exit(1)
+            print("Connessione chiusa\n")
+            peerSocket.close()
+            os._exit(1)
