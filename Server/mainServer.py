@@ -1,7 +1,7 @@
 import os
 import socket
-from Classi.server import Server
-from Classi.utilitiesServer import Utilities
+from .Classi.server import Server
+from .Classi.utilitiesServer import Utilities
 
 try:
     exec(open(os.path.dirname(__file__) + "/Classi/script.py").read())

@@ -1,7 +1,7 @@
-from Classi.client import Client
-from Classi.utilities import Utilities
-from Classi.file import File
-from Classi.peer import Peer
+from .Classi.client import Client
+from .Classi.utilities import Utilities
+from .Classi.file import File
+from .Classi.peer import Peer
 import socket
 import sys
 import random
@@ -74,7 +74,7 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            request = "RETR" + "34d11ba4649ef93621ca742e2d21add9"
+            request = "RETR" + ""
             socketDownload.send(request.encode())
 
             fd = os.open("prova.txt", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o777)
