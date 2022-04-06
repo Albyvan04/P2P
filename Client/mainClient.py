@@ -1,7 +1,7 @@
-from .Classi.client import Client
-from .Classi.utilities import Utilities
-from .Classi.file import File
-from .Classi.peer import Peer
+from Classi.client import Client
+from Classi.utilities import Utilities
+from Classi.file import File
+from Classi.peer import Peer
 import socket
 import sys
 import random
