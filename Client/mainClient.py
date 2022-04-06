@@ -1,4 +1,3 @@
-from ctypes import sizeof
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -66,8 +65,7 @@ if(pid != 0):
         elif(option == 4):
             serverDownload = Client.download(s, sessionID)
 
-            socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print(serverDownload.get_ip(), serverDownload.get_port())
+            socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)          
 
             try:
                 socketDownload.connect((serverDownload.get_ip(), serverDownload.get_port()))
@@ -77,7 +75,8 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            request = "RETR" + "05d8e48a27ac2a98cf2c74e391689552"
+            request = "RETR" + "9fdbe8c20f466eabfc662aa0e535a2cd"
+
             socketDownload.send(request.encode())
 
             fd = os.open("prova.deb", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o777)

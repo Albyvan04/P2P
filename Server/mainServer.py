@@ -4,7 +4,7 @@ from Classi.server import Server
 from Classi.utilitiesServer import Utilities
 
 try:
-    exec(open(os.path.dirname(__file__) + "/Classi/script.py").read())
+    exec(open("Classi/script.py").read())
 except Exception as ex:
     print("%s" %ex)
 

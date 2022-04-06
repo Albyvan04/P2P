@@ -29,4 +29,4 @@ class Utilities:
 
     @staticmethod
     def formatString(string, lenght):
-        return string.ljust(lenght, '0')
+        return string.rjust(lenght, '|')
