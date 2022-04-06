@@ -1,12 +1,14 @@
 import psycopg2
 import json
 import time
-from peer import Peer
-from log import Log
+from .peer import Peer
+from .log import Log
 from enum import Enum
 
 class ORM:
     
+    connection = ""
+
     #costruttore
     def __init__(self):
         try:

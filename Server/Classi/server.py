@@ -1,7 +1,7 @@
 import socket
-from peer import Peer
-from orm import ORM
-from utilitiesServer import Utilities
+from .peer import Peer
+from .orm import ORM
+from .utilitiesServer import Utilities
 
 
 class Server:
