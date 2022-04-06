@@ -137,6 +137,3 @@ else:
         print("Connessione chiusa\n")
         peerSocket.close()
         os._exit(1)
-
-
-

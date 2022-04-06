@@ -1,34 +1,58 @@
 import socket
+from peer import Peer
+from orm import ORM
 from .utilitiesServer import Utilities
 
 class Server:
 
     @staticmethod
-    def login(socket):
-        #aggiungere in database
-        socket.send(("ALGI" + Utilities.generateSessionID()).encode())
+    def login(request):
+
+        #parsing pacchetto
+        ipClient = request[4:19]
+        portClient = request[19:24]
+
+        #generazione session id random
+        sessionId = Utilities.generateSessionID()
+
+        peer = Peer(sessionId, ipClient, portClient)
+        orm = ORM()
+
+        try:
+
+            #nuovo peer su db
+            orm.addPeer(peer)
+            return peer, True
+
+        except Exception as ex:
+            print(ex.__str__())
+
+        return peer, False
 
     @staticmethod
-    def addFile(socket, request):
+    def addFile(socket):
         #aggiungere in database
         socket.send(("AADD").encode()) #manca attributo
 
     @staticmethod
-    def removeFile(socket, request):
+    def removeFile(socket, sessionId):
         return ""
     
     @staticmethod
-    def searchFile(socket,  request):
+    def searchFile(socket, sessionId):
         return ""
 
     @staticmethod
-    def download(socket, request):
+    def download(socket, sessionId):
         return ""
 
     @staticmethod
-    def logout(socket, request):
-        #rimuovo da database
-        socket.send(("ALGO").encode()) #manca attributo
-
-
-    
+    def logout(request):
+        sessionId = request[4:20]
+        try:
+            orm.deletePeer(sessionId)
+            #finire il pacchetto
+            return True
+        except Exception as ex:
+            print(ex.__str__())
+        return False

@@ -1,6 +1,7 @@
 import hashlib
 
 class File:
+    
     def __init__(self, fileName, filePath):
         self.fileName = fileName
         self.filePath = filePath
