@@ -56,6 +56,3 @@ class Server:
         except Exception as ex:
             print(ex.__str__())
         return False
-
-
-    
