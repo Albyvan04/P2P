@@ -36,14 +36,16 @@ while True:
           #elaborazione della richiesta
           peer, bol = Server.login(request)
 
-          if (bol == True):
-            print("Login effettuato")
+          #if (bol == True):
+          #  print("Login effettuato")
 
             #risposta del server
-            clientSocket.send(("ALGI" + peer.get_session_id()).encode())
+          #clientSocket.send(("ALGI" + peer.get_session_id()).encode())
+          clientSocket.send(("ALGI" + Utilities.generateSessionID()).encode())
 
-          else:
-            print("Login fallito")
+
+          #else:
+          #  print("Login fallito")
         #endregion
 
         #region ADD FILE

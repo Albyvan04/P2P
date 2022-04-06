@@ -17,7 +17,7 @@ if (len(sys.argv) != 2):
     print("\nI parametri passati non sono corretti.\nFormato nomeFile ipServer.")
     exit(0)
 
-PORTASERVER = 50001
+PORTASERVER = 80
 CHUNKLEN = 2048
 ipServer = sys.argv[1]
 
@@ -65,28 +65,31 @@ if(pid != 0):
             serverDownload = Client.download(s, sessionID)
 
             socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print(serverDownload.get_ip(), serverDownload.get_port())
 
             try:
-                socketDownload.connect((socketDownload.ip, socketDownload.port))
+                socketDownload.connect((serverDownload.get_ip(), serverDownload.get_port()))
             except:
                 print("Errore di connessione al servizio di download")
                 exit(0)
             else:
                 print("Connesso al servizio di download")
 
-            request = "RETR" + ""
+            request = "RETR" + "05d8e48a27ac2a98cf2c74e391689552"
             socketDownload.send(request.encode())
 
-            fd = os.open("prova.txt", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o777)
+            fd = os.open("prova.deb", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o777)
 
             print("Ricezione di %s" % "prova.txt")
 
             while True:
-                response = socketDownload.recv(4096).decode()
+                response = socketDownload.recv(CHUNKLEN + 15)
+                print(response)
                 buf = response[15 : 15 + CHUNKLEN]
                 if not buf:
                     break
                 os.write(fd, buf)
+            socketDownload.close()
             
         elif(option == 5):
             Client.logout(s, sessionID)
