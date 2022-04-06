@@ -68,7 +68,8 @@ if(pid != 0):
         elif(option == 4):
             serverDownload = Client.download(s, sessionID)
 
-            socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)          
+            socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print(serverDownload.get_ip(), serverDownload.get_port())
 
             try:
                 socketDownload.connect((serverDownload.get_ip(), serverDownload.get_port()))
@@ -78,21 +79,22 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            request = "RETR" + "9fdbe8c20f466eabfc662aa0e535a2cd"
-
+            request = "RETR" + "de00576ee385fd0e1a0c59cf06fcd80a"
             socketDownload.send(request.encode())
 
-            fd = os.open("prova.deb", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o777)
+            fd = open("prova.txt", "w")
 
             print("Ricezione di %s" % "prova.txt")
 
             while True:
-                response = socketDownload.recv(CHUNKLEN + 15)
-                print(response)
+                response = socketDownload.recv(15 + CHUNKLEN)
+                #print(len(response))
                 buf = response[15 : 15 + CHUNKLEN]
-                if not buf:
+                if len(buf) == 0:
                     break
-                os.write(fd, buf)
+                fd.write(buf.decode())
+            fd.close()
+            print("sara")
             socketDownload.close()
             
         elif(option == 5):
