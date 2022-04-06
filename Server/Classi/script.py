@@ -31,9 +31,9 @@ try:
 
     #creazione DB
     dropDb = queryDict["DROPDB"]
-    cursor.execute(dropDb)
+    #cursor.execute(dropDb)
     createDb = queryDict["CREATEDB"]
-    cursor.execute(createDb)
+    #cursor.execute(createDb)
     print("Database creato con successo")
 
     #ricreo la connessione sul DB appena creato

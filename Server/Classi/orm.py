@@ -7,19 +7,17 @@ from enum import Enum
 
 class ORM:
     
-    connection = ""
-
     #costruttore
     def __init__(self):
         try:
-
+            
             #lettura file json di configurazione server db
-            filename = "config.json"
+            filename = "Classi/config.json"
             with open(filename, "r") as dictionary:
                 configDict = json.load(dictionary)
 
             #connessione al server
-            connection = psycopg2.connect(
+            self.connection = psycopg2.connect(
                 database = configDict["DB_NAME"], 
                 user = configDict["USER"], 
                 password = configDict["PSW"], 
@@ -27,44 +25,44 @@ class ORM:
                 port = configDict["PORT"]
                 )
             
-            connection.autocommit = True
+            self.connection.autocommit = True
         except Exception as ex:
             print(ex.__str__())
 
     #region PEER
 
-    def addPeer(peer):
-        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES (%s, %s, %s)" %(peer.sessionId, peer.ip, peer.port)
-        cursor = connection.cursor()
+    def addPeer(self, peer):
+        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES ('%s', '%s', '%s')" %(peer.get_session_id(), peer.get_ip(), peer.get_port())
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
             print("Peer aggiunto correttamente")
-            l = Log(peer.sessionId, Tipo_Operazione.Login, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
-            ORM.addLog(l)
+            l = Log(peer.get_session_id(), Tipo_Operazione.Login, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
+            self.addLog(l)
         except Exception as ex:
             print(ex.__str__())
 
-    def selectPeer(ip, port):
+    def selectPeer(self, ip, port):
         query = "SELECT * FROM peer WHERE ip_peer = %s AND port_peer = %s" %(ip, port)
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
             #cursor.fetchall()
         except Exception as ex:
             print(ex.__str__())
 
-    def checkPeer(sessionID):
+    def checkPeer(self, sessionID):
         query = "SELECT * FROM peer WHERE session_id = %s" %sessionID
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
             #cursor.fetchall()
         except Exception as ex:
             print(ex.__str__())
 
-    def deletePeer(sessionID):
+    def deletePeer(self, sessionID):
         query = "DELETE FROM peer WHERE session_id = %s" %sessionID
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
             print("Peer rimosso correttamente")
@@ -76,20 +74,18 @@ class ORM:
     #endregion
 
     #region LOG
-    @staticmethod
-    def addLog(log):
-        query = "INSERT INTO log (*) VALUES(%s, %s, %s, %s)" %(log.sessionID, log.tipo_operazione.__str__(), log.data, log.ora)
-        cursor = connection.cursor()
+    def addLog(self, log):
+        query = "INSERT INTO log (session_id, data, ora, operazione) VALUES('%s', '%s', '%s', '%s')" %(log.sessionID, log.data, log.ora, log.tipo_operazione.__str__())
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
             print("Log creato")
         except Exception as ex:
             print(ex.__str__())
 
-    @staticmethod
-    def selectLog(sessionID):
+    def selectLog(self, sessionID):
         query = "SELECT * FROM log WHERE session_id = %s" %sessionID
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
         except Exception as ex:
@@ -98,33 +94,33 @@ class ORM:
     #endregion
 
     #region FILE
-    def addFile(md5_File, filename, filepath):
+    def addFile(self, md5_File, filename, filepath):
         query = "INSERT INTO file (*) VALUES(%s, %s, %s)" %(md5_File, filename, filepath)
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
         except Exception as ex:
             print(ex.__str__())
 
-    def selectfile(filename):
+    def selectfile(self, filename):
         query = "SELECT * FROM file WHERE filename = %s" %filename
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
         except Exception as ex:
             print(ex.__str__())
 
-    def updateFile(newFilename, newFilepath, md5_File):
+    def updateFile(self, newFilename, newFilepath, md5_File):
         query = "UPDATE file SET filename = %s, filepath = %s WHERE md5_file = %s" %(newFilename, newFilepath, md5_File)
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
         except Exception as ex:
             print(ex.__str__())
     
-    def deleteFile(md5_file):
+    def deleteFile(self, md5_file):
         query = "DELETE FROM file WHERE md5_file = %s" %md5_file
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
         except Exception as ex:
@@ -133,17 +129,17 @@ class ORM:
     #endregion
 
     #region PEER_FILE
-    def selectPeerFile(sessionID, md5_file):
+    def selectPeerFile(self, sessionID, md5_file):
         query = "SELECT * FROM peer_file WHERE session_id = %s AND md5_file = %s" %(sessionID, md5_file)
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
         except Exception as ex:
             print(ex.__str__())
 
-    def addPeerFile(sessionID, md5_file, copia):
+    def addPeerFile(self, sessionID, md5_file, copia):
         query = "INSERT INTO peer_file (*) VALUES(%s, %s, %d)" %(sessionID, md5_file, copia)
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         try:
             cursor.execute(query)
         except Exception as ex:

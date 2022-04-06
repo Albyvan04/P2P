@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -18,7 +21,7 @@ if (len(sys.argv) != 2):
     exit(0)
 
 PORTASERVER = 80
-CHUNKLEN = 2048
+CHUNKLEN = 4096-15
 ipServer = sys.argv[1]
 
 #memorizzo i file nella cartella da condividere
@@ -105,7 +108,6 @@ if(pid != 0):
 else:
 
     socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     socketDownload.bind(('', int(portaClient)))
     socketDownload.listen(10)
     print("In ascolto di richieste di download...")
@@ -129,21 +131,22 @@ else:
                     if(file.fileMd5 == md5):
                         filename = file.fileName
 
-                fd = os.open("sharedFiles/" + filename, os.O_RDONLY)
+                fd = open("sharedFiles/" + filename, "rb")
 
                 chunkIndex = 0
                 while True:
-                    buf = os.read(fd, CHUNKLEN).decode()
-                    if not buf:
-                        break
-                    request = "ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN) + buf
+                    buf = fd.read(CHUNKLEN)
+                    request = "ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN) + buf.decode()
                     print(request)
                     print(request.encode())
                     peerSocket.send(request.encode(), CHUNKLEN + 15)
                     chunkIndex += 1
+                    if len(buf) == 0:
+                        break
 
-                os.close(fd)
+                fd.close()
             
             print("Connessione chiusa\n")
+
             peerSocket.close()
             os._exit(1)
