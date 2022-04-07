@@ -51,3 +51,6 @@ class TestUtilities(unittest.TestCase):
         self.assertEqual(md5_file, result, "Should be 4c58febf1ac7d8fd831b7494655734df")
 
 #da fare test file client alla fine
+
+if __name__ == "__main__":
+    unittest.main()
