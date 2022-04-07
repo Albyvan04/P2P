@@ -79,7 +79,7 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            request = "RETR" + "de00576ee385fd0e1a0c59cf06fcd80a"
+            request = "RETR" + "e8cfd85c5430eeef927e33ee4a11562e"
             socketDownload.send(request.encode())
 
             fd = open("prova.txt", "w")
@@ -88,11 +88,12 @@ if(pid != 0):
 
             while True:
                 response = socketDownload.recv(15 + CHUNKLEN)
-                #print(len(response))
+                print(len(response))
                 buf = response[15 : 15 + CHUNKLEN]
+                #print(len(buf))
                 if len(buf) == 0:
                     break
-                fd.write(buf.decode())
+                fd.write(buf.decode('latin-1'))
             fd.close()
             print("sara")
             socketDownload.close()
