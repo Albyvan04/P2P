@@ -140,11 +140,13 @@ else:
                 while True:
                     buf = fd.read(CHUNKLEN)
                     request = "ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN) + buf.decode()
-                    print(request)
-                    print(request.encode())
+                    print(len(request.encode()))
+                    #print(request)
+                    #print(request.encode())
                     peerSocket.send(request.encode(), CHUNKLEN + 15)
                     chunkIndex += 1
                     if len(buf) == 0:
+                        print("brekka tutto")
                         break
 
                 fd.close()
@@ -152,4 +154,9 @@ else:
             print("Connessione chiusa\n")
 
             peerSocket.close()
+            
+            print("In ascolto di richieste di download...")
+
             os._exit(1)
+
+
