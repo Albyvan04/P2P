@@ -21,7 +21,7 @@ class Utilities:
 
     @staticmethod
     def get_md5 (fileName):
-        file = open("sharedFiles/"+ fileName, 'rb')
+        file = open(fileName, 'rb')
         dati = file.read()
         md5 = ''
         md5 = hashlib.md5(dati).hexdigest()

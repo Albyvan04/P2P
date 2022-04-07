@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*- 
-
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -28,7 +25,7 @@ ipServer = sys.argv[1]
 files = []
 filesName = os.listdir("sharedFiles")
 for fileName in filesName:
-    fileMd5 = Utilities.get_md5(fileName)
+    fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
     print(fileMd5)
     files.append(File(fileName, fileMd5))       
 
@@ -79,12 +76,16 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            request = "RETR" + "e8cfd85c5430eeef927e33ee4a11562e"
+            fileMd5 = "9e54ddb4f92985237168a16476d0c91c"
+
+            request = "RETR" + fileMd5
             socketDownload.send(request.encode())
 
-            fd = open("prova.txt", "wb")
+            nameFile = "prova.pdf"
 
-            print("Ricezione di %s" % "prova.txt")
+            fd = open(nameFile, "wb")
+
+            print("Ricezione di %s" % nameFile)
 
             while True:
                 response = socketDownload.recv(15 + CHUNKLEN)
@@ -94,8 +95,17 @@ if(pid != 0):
                     break
                 fd.write(buf)
             fd.close()
-            print("sara")
             socketDownload.close()
+
+            receivedFileMd5 = Utilities.get_md5(nameFile)
+
+
+            #controllo ricezione
+            if(receivedFileMd5 == fileMd5):
+                print("File ricevuto correttamente")
+            else:
+                print("Ricezione file errata")
+                os.remove(nameFile)
             
         elif(option == 5):
             Client.logout(s, sessionID)
