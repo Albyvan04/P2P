@@ -82,18 +82,17 @@ if(pid != 0):
             request = "RETR" + "e8cfd85c5430eeef927e33ee4a11562e"
             socketDownload.send(request.encode())
 
-            fd = open("prova.txt", "w")
+            fd = open("prova.txt", "wb")
 
             print("Ricezione di %s" % "prova.txt")
 
             while True:
                 response = socketDownload.recv(15 + CHUNKLEN)
                 print(len(response))
-                buf = response[15 : 15 + CHUNKLEN]
-                #print(len(buf))
+                buf = response[15 : 15 + int(response[10 : 15].decode())]
                 if len(buf) == 0:
                     break
-                fd.write(buf.decode('latin-1'))
+                fd.write(buf)
             fd.close()
             print("sara")
             socketDownload.close()
@@ -139,11 +138,9 @@ else:
                 chunkIndex = 0
                 while True:
                     buf = fd.read(CHUNKLEN)
-                    request = "ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN) + buf.decode()
-                    print(len(request.encode()))
-                    #print(request)
-                    #print(request.encode())
-                    peerSocket.send(request.encode(), CHUNKLEN + 15)
+                    request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN)).encode() + buf
+                    print(len(request))
+                    peerSocket.send(request, CHUNKLEN + 15)
                     chunkIndex += 1
                     if len(buf) == 0:
                         print("brekka tutto")
