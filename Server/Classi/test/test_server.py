@@ -7,6 +7,7 @@ from peer import *
 from utilitiesServer import *
 from server import *
 
+#test classe download
 class TestDownload(unittest.TestCase):  
     def test_get_sessionID(self):
         download = Download("2394be2e1263dcd5b566494fa5d11359", "c26679467622336004c6b6a86a91248c")
@@ -29,7 +30,8 @@ class TestDownload(unittest.TestCase):
         download.set_md5file(md5_file)
         check_md5 = download.get_md5file()
         self.assertEqual(check_md5, "c26679467622336004c6b6a86a91248c", "Should be c26679467622336004c6b6a86a91248c") 
-        
+
+#test classe File
 class TestFile(unittest.TestCase):
     def test_get_md5(self):
         file = open("server.py", 'rb')
@@ -46,6 +48,7 @@ class TestFile(unittest.TestCase):
         
 #forse dopo serve test per classe log
 
+#test classe Peer
 class TestPeer(unittest.TestCase):
     def test_set_session_id(self, peer):
         sessionID = "61b1eb268b8b8c0b51565dc3e63788d5"
@@ -79,13 +82,15 @@ class TestPeer(unittest.TestCase):
         peer = Peer("b5fb4e26e0728593f1e4b8722e141643", "192.168.1.1", 80)
         port = peer.get_port()
         self.assertEqual(port, 80, "Should be 80")
-        
+
+#test classe utilities server
 class TestUtilities(unittest.TestCase):
     def test_generateSessionID(self):
         sessionID = Utilities.generateSessionID()
         lenght = sizeof(sessionID)
         self.assertEqual(sessionID, lenght, "Shoulb be 16")
-        
+
+#test del server
 class TestServer(unittest.TestCase):
     def test_login(self, request):
         request = "LOGI000.000.000.00000000"
