@@ -33,6 +33,21 @@ class TestDownload(unittest.TestCase):
 
 #test classe File
 class TestFile(unittest.TestCase):
+    def test_get_md5(self, file):
+        file = File("download.py", "P2P-main\Server\Classi\download.py")
+        md5_file = "b08d6481479b41f6803efe27b478d05c"
+        result = File.get_md5(file)
+        self.assertEqual(result, md5_file, "Should be b08d6481479b41f6803efe27b478d05c")
+
+    def test_check_md5(self, file):
+        file = File("download.py", "P2P-main\Server\Classi\download.py")
+        md5_file = "b08d6481479b41f6803efe27b478d05c"
+        result = File.check_md5(md5_file)
+        self.assertEqual(result, True, "Should be True")
+        
+
+#test classe File probabilmente sbagliato
+"""class TestFile(unittest.TestCase):
     def test_get_md5(self):
         file = open("server.py", 'rb')
         dati = file.read()
@@ -44,7 +59,7 @@ class TestFile(unittest.TestCase):
         md5 = "c541656ccda07039173d61567119c92e"
         file = File(md5, "server.py")
         check_md5 = file.get_md5()
-        self.assertEqual(check_md5, "c541656ccda07039173d61567119c92e", "Should be c541656ccda07039173d61567119c92e")
+        self.assertEqual(check_md5, "c541656ccda07039173d61567119c92e", "Should be c541656ccda07039173d61567119c92e")"""
         
 #forse dopo serve test per classe log
 
