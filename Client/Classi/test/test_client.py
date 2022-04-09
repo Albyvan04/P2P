@@ -42,7 +42,7 @@ class TestUtilities(unittest.TestCase):
         ip = "192.168.1.1"
         ipSplitted = ip.split('.')
         result = Utilities.formatIp(ip)
-        self.assertEqual('.'.join(ipSplitted), result, "Should be %s" %('.'.join(ipSplitted)))
+        self.assertEqual('.'.join(ipSplitted), result, "Should be %s" %('.'.join(ipSplitted))) #da ricontrollare
 
     def test_get_md5(self, fileName):
         fileName = "file.py"
