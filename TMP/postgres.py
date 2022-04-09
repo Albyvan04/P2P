@@ -18,7 +18,6 @@ try:
         host = configDict["IP"],
         port = configDict["PORT"]
     ) 
-    #esempio connessione al DB ===> database = "<nomeDB>" user = '<username>' password = '<password>' host = '<localhost>' port = '<5432>'
 
     #crea in automatico la connessione e rimane aperta
     connessione.autocommit = True
