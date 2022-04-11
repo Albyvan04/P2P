@@ -42,6 +42,9 @@ while True:
           #clientSocket.send(("ALGI" + peer.get_session_id()).encode())
           clientSocket.send(("ALGI" + Utilities.generateSessionID()).encode())
 
+          #else:
+            #print("Login non riuscito")
+
 
           #else:
           #  print("Login fallito")
@@ -49,23 +52,34 @@ while True:
 
         #region ADD FILE
         elif(request[0:4] == "ADDF"):
-          Server.addFile(clientSocket, request)
-          print("AddFile")
+
+          #elaborazione richiesta
+          nCopia, bol = Server.addFile(request)
+
+          if (bol == True):
+            print("File aggiunti correttamente")
+
+            #risposta del server
+            clientSocket.send(("AADD").encode() + ('%05d' % nCopia).encode())
+
+          else:
+            print("Problema nell'aggiunta dei file")
+
         #endregion
 
         #region REMOVE FILE
         elif(request[0:4] == "DELF"):
-          Server.removeFile(clientSocket, request)
+          Server.removeFile(request)
         #endregion
 
         #region FIND FILE
         elif(request[0:4] == "FIND"):
-          Server.searchFile(clientSocket, request)
+          Server.searchFile(request)
         #endregion
 
         #region DOWNLOAD FILE
         elif(request[0:4] == "RETR"):
-          Server.download(clientSocket, request)
+          Server.download(request)
         #endregion
 
         #region LOGOUT
@@ -76,7 +90,7 @@ while True:
             print("Logout effettuato")
 
             #risposta al client
-            clientSocket.send(("ALGO").encode()) #manca attributo
+            clientSocket.send(("ALGO").encode() + ("").encode()) #manca attributo
             continueCicle = False
 
           else:
