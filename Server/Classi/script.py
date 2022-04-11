@@ -62,11 +62,6 @@ try:
     tabellaFile = queryDict["CREATETAB_FILE"]
     cursor.execute(tabellaFile)
     print("Tabella File")
-    
-    #tabella peer_file
-    tabellaPeer_File = queryDict["CREATETAB_FILE_PEER"]
-    cursor.execute(tabellaPeer_File)
-    print("Tabella Peer_File")
 
     #tabella download
     tabellaDownload = queryDict["CREATETAB_DOWNLOAD"]

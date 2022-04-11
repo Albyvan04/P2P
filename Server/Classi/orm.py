@@ -93,8 +93,8 @@ class ORM:
     #endregion
 
     #region FILE
-    def addFile(self, md5_File, filename):
-        query = "INSERT INTO file (md5_file, filename) VALUES('%s', '%s')" %(md5_File, filename)
+    def addFile(self, md5_File, sessionId, filename, copia):
+        query = "INSERT INTO file (md5_file, filename, session_id, copia) VALUES('%s', '%s', '%s', '%s')" %(md5_File, filename, sessionId, copia)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -117,18 +117,18 @@ class ORM:
         except Exception as ex:
             print(ex.__str__())
     
-    def deleteFile(self, md5_file, sessionId):
-        query = "DELETE FROM file WHERE md5_file = %s AND session" %md5_file
+    def deleteFile(self, sessionId, md5_file):
+        query = "DELETE FROM file WHERE session_id = '%s' AND md5_file = '%s'" %(sessionId, md5_file)
         cursor = self.connection.cursor()
         try:
-            cursor.execute(query)
+            if (cursor.execute(query) > 0):
+                return True
         except Exception as ex:
             print(ex.__str__())
-    #endregion
+        return False
 
-    #region PEER_FILE
     def selectPeerFile(self, sessionID):
-        query = "SELECT * FROM peer_file WHERE session_id = '%s'" %(sessionID)
+        query = "SELECT * FROM file WHERE session_id = '%s'" %(sessionID)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -141,16 +141,8 @@ class ORM:
         except Exception as ex:
             print(ex.__str__())
 
-    def addPeerFile(self, sessionID, md5_file, copia):
-        query = "INSERT INTO peer_file (*) VALUES(%s, %s, %d)" %(sessionID, md5_file, copia)
-        cursor = self.connection.cursor()
-        try:
-            cursor.execute(query)
-        except Exception as ex:
-            print(ex.__str__())
-
     def selectCopyFile(self, md5_file):
-        query = "SELECT MAX(copia) FROM peer_file WHERE md5_file = '%s'" %md5_file
+        query = "SELECT MAX(copia) FROM file WHERE md5_file = '%s'" %md5_file
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -159,7 +151,7 @@ class ORM:
             print(ex.__str__())
 
     def countFile(self, sessionId):
-        query = "SELECT COUNT(*) FROM peer_file WHERE session_id = '%s'" %sessionId
+        query = "SELECT COUNT(*) FROM file WHERE session_id = '%s'" %sessionId
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)

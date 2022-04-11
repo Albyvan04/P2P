@@ -57,19 +57,30 @@ while True:
           nCopia, bol = Server.addFile(request)
 
           if (bol == True):
-            print("File aggiunti correttamente")
+            print("File aggiunto correttamente")
 
             #risposta del server
             clientSocket.send(("AADD").encode() + ('%05d' % nCopia).encode())
 
           else:
-            print("Problema nell'aggiunta dei file")
+            print("Problema nell'aggiunta del file")
 
         #endregion
 
         #region REMOVE FILE
         elif(request[0:4] == "DELF"):
-          Server.removeFile(request)
+
+          nCopie, bol = Server.removeFile(request)
+
+          if (bol == True):
+            print("File rimosso correttamente")
+
+            #risposta del server
+            clientSocket.send(("ADEL").encode() + ('%03d' % nCopie).encode())
+
+          else:
+            print("Problema con la rimozione del file")
+
         #endregion
 
         #region FIND FILE
