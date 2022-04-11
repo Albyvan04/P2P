@@ -1,3 +1,5 @@
+import re
+from ssl import SOL_SOCKET
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -66,6 +68,7 @@ if(pid != 0):
             serverDownload = Client.download(s, sessionID)
 
             socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
             print(serverDownload.get_ip(), serverDownload.get_port())
 
             try:
@@ -147,14 +150,19 @@ else:
 
                 chunkIndex = 0
                 while True:
-                    buf = fd.read(CHUNKLEN)
-                    request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN)).encode() + buf
+                    buf = fd.read()
+                    request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % len(buf))).encode() + buf
                     print(len(request))
-                    peerSocket.send(request, CHUNKLEN + 15)
-                    chunkIndex += 1
-                    if len(buf) == 0:
-                        print("brekka tutto")
-                        break
+                    peerSocket.sendall(request)
+                    break
+                    # buf = fd.read(CHUNKLEN)
+                    # if len(buf) == 0:
+                    #     print("brekka tutto")
+                    #     break
+                    # request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN)).encode() + buf
+                    # print(len(request))
+                    # peerSocket.send(request, CHUNKLEN + 15)
+                    # chunkIndex += 1
 
                 fd.close()
             
