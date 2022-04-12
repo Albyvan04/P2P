@@ -79,24 +79,31 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            fileMd5 = "9e54ddb4f92985237168a16476d0c91c"
+            fileMd5 = "28ecbf09ef926a45631fa9e0bd1cec21"
 
             request = "RETR" + fileMd5
             socketDownload.send(request.encode())
 
-            nameFile = "prova.pdf"
+            nameFile = "code_1.65.2-1646927742_amd64.deb"
 
             fd = open(nameFile, "wb")
 
             print("Ricezione di %s" % nameFile)
 
+
             while True:
-                response = socketDownload.recv(15 + CHUNKLEN)
-                print(len(response))
-                buf = response[15 : 15 + int(response[10 : 15].decode())]
-                if len(buf) == 0:
+                response = socketDownload.recv(15)
+                lenght = int(response[10 : 15])
+                print(lenght)
+                if lenght == 0:
                     break
+                buf = socketDownload.recv(lenght)
+                print(len(buf))
+                print(buf)
+                #buf = response[15 : 15 + int(response[10 : 15].decode())]
+                
                 fd.write(buf)
+
             fd.close()
             socketDownload.close()
 
@@ -125,7 +132,7 @@ else:
     socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socketDownload.bind(('', int(portaClient)))
     socketDownload.listen(10)
-    print("\nIn ascolto di richieste di download...")
+    print("In ascolto di richieste di download...")
 
     while True:
 
@@ -150,19 +157,21 @@ else:
 
                 chunkIndex = 0
                 while True:
-                    buf = fd.read()
+
+                    #buf = fd.read()
+                    #request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % len(buf))).encode() + buf
+                    #print(len(request))
+                    #peerSocket.sendall(request)
+                    #break
+                    buf = fd.read(CHUNKLEN)
                     request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % len(buf))).encode() + buf
                     print(len(request))
-                    peerSocket.sendall(request)
-                    break
-                    # buf = fd.read(CHUNKLEN)
-                    # if len(buf) == 0:
-                    #     print("brekka tutto")
-                    #     break
-                    # request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % CHUNKLEN)).encode() + buf
-                    # print(len(request))
-                    # peerSocket.send(request, CHUNKLEN + 15)
-                    # chunkIndex += 1
+                    print(request)
+                    peerSocket.send(request, len(request))
+                    if len(buf) == 0:
+                        print("brekka tutto")
+                        break
+                    chunkIndex += 1
 
                 fd.close()
             
@@ -173,5 +182,8 @@ else:
             print("In ascolto di richieste di download...")
 
             os._exit(1)
+
+
+
 
 
