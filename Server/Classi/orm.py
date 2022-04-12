@@ -46,7 +46,7 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            return cursor.fetchall()
+            return cursor.fetchone()
         except Exception as ex:
             print(ex.__str__())
 
@@ -109,6 +109,15 @@ class ORM:
         except Exception as ex:
             print(ex.__str__())
 
+    def selectIDfile(self, sessionID, md5_file):
+        query = "SELECT id FROM file WHERE session_id = '%s' and md5_file = '%s'" %(sessionID, md5_file)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            return cursor.fetchone()
+        except Exception as ex:
+            print(ex.__str__())
+
     def updateFile(self, newFilename, newFilepath, md5_File):
         query = "UPDATE file SET filename = %s, filepath = %s WHERE md5_file = %s" %(newFilename, newFilepath, md5_File)
         cursor = self.connection.cursor()
@@ -160,6 +169,26 @@ class ORM:
         except Exception as ex:
             print(ex.__str__())
     
+    #endregion
+
+    #region DOWNLOAD
+    def addDownload(self, sessionId, id_file):
+        query = "INSERT INTO download (session_id, id_file) VALUES('%s', '%d')" %(sessionId, id_file)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            print("Download registrato nel database")
+        except Exception as ex:
+            print(ex.__str__())
+
+    def countDownload(self, md5_file):
+        query = "SELECT COUNT(*) FROM download WHERE md5_file = '%s'" %md5_file
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            return cursor.fetchone()
+        except Exception as ex:
+            print(ex.__str__())
     #endregion
 
 #enumeratore tipo di operazione per log

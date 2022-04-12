@@ -120,3 +120,22 @@ class Server:
         except Exception as ex:
             print(ex.__str__())
         return False
+
+    @staticmethod
+    def reg_download(request):
+        sessionID = request[4:20]
+        md5_file = request[20:52]
+        ip = request[52:67]
+        port = request[67:72]
+        orm = ORM()
+        try:
+            id_peer = orm.selectPeer(ip, port)
+            id_file = orm.selectIDfile(id_peer, md5_file)
+            orm.addDownload(sessionID, id_file)
+            nDownload = orm.countDownload(md5_file)
+            l = Log(sessionID, Tipo_Operazione.DownloadFile, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
+            orm.addLog(l)
+            return nDownload, True   
+        except Exception as ex:
+            print(ex.__str__())
+        return -1, False

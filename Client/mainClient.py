@@ -56,7 +56,7 @@ if(pid != 0):
 
     option = int(input())
 
-    while(option!= 5):
+    while(option != 5):
 
         if(option == 1):
             Client.addFile(s, sessionID, files)
@@ -85,7 +85,6 @@ if(pid != 0):
             socketDownload.send(request.encode())
 
             nameFile = "code_1.65.2-1646927742_amd64.deb"
-            #da chiedere
 
             fd = open(nameFile, "wb")
 
@@ -100,7 +99,7 @@ if(pid != 0):
                     break
                 buf = socketDownload.recv(lenght)
                 print(len(buf))
-                #print(buf)
+                print(buf)
                 #buf = response[15 : 15 + int(response[10 : 15].decode())]
                 
                 fd.write(buf)
@@ -114,12 +113,18 @@ if(pid != 0):
             #controllo ricezione
             if(receivedFileMd5 == fileMd5):
                 print("File ricevuto correttamente")
+                Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.get_ip(), serverDownload.get_port())
             else:
                 print("Ricezione file errata")
                 os.remove(nameFile)
+
+
+            
+
             
         elif(option == 5):
             Client.logout(s, sessionID)
+
 
 
         Client.showMenu()
@@ -183,6 +188,9 @@ else:
             print("In ascolto di richieste di download...")
 
             os._exit(1)
+
+
+
 
 
 

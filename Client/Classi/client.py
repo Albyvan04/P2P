@@ -48,6 +48,15 @@ class Client:
 
 
     @staticmethod
+    def reg_download(socket, sessionId, md5_file, ip, port):
+        request = "RREG" + sessionId + md5_file + ip + port
+        socket.send(request.encode())
+        response = socket.recv(4096).decode()
+        print("Download registrato sul server") if response[0: 4] == "ARRE" else exit("Download non registrato")
+
+
+
+    @staticmethod
     def showMenu():
         print("\n= = = = = = = = =")
         print("\n     M E N Ù     ")
