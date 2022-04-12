@@ -85,6 +85,7 @@ if(pid != 0):
             socketDownload.send(request.encode())
 
             nameFile = "code_1.65.2-1646927742_amd64.deb"
+            #da chiedere
 
             fd = open(nameFile, "wb")
 
@@ -99,7 +100,7 @@ if(pid != 0):
                     break
                 buf = socketDownload.recv(lenght)
                 print(len(buf))
-                print(buf)
+                #print(buf)
                 #buf = response[15 : 15 + int(response[10 : 15].decode())]
                 
                 fd.write(buf)
