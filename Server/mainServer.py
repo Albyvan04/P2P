@@ -1,3 +1,4 @@
+from multiprocessing.connection import Client
 import os
 import socket
 from Classi.server import Server
@@ -102,6 +103,15 @@ while True:
 
           else:
             print("Logout fallito")
+
+        elif(request[0:4] == "RREG"):
+          result, bol = Server.reg_download(request)
+          if(bol == True):
+            print("Download registrato")
+            clientSocket.send(("ARRE").encode() + ('%05d' % int(result)).encode())
+          else:
+            print("Download non registrato")
+           
         #endregion
 
       print("Connessione chiusa\n")
