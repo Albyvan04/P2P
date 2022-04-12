@@ -28,7 +28,7 @@ class Server:
 
             #creo il log
             l = Log(peer.get_session_id(), Tipo_Operazione.Login, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
-            ORM.addLog(l)
+            orm.addLog(l)
             return peer, True
 
         except Exception as ex:
@@ -55,7 +55,7 @@ class Server:
 
             #creo il log
             l = Log(session_id, Tipo_Operazione.AddFile, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
-            ORM.addLog(l)
+            orm.addLog(l)
 
             #ritorno il numero di copia aggiunto per il pacchetto di risposta
             return nCopia, True
@@ -114,7 +114,7 @@ class Server:
 
             #creo il log
             l = Log(sessionId, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
-            ORM.addLog(l)
+            orm.addLog(l)
 
             return True
         except Exception as ex:

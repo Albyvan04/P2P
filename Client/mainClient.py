@@ -125,7 +125,7 @@ else:
     socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     socketDownload.bind(('', int(portaClient)))
     socketDownload.listen(10)
-    print("In ascolto di richieste di download...")
+    print("\nIn ascolto di richieste di download...")
 
     while True:
 
