@@ -66,7 +66,7 @@ class ORM:
             cursor.execute(query)
             print("Peer rimosso correttamente")
             l = Log(sessionID, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
-            ORM.addLog(l)
+            self.addLog(l)
         except Exception as ex:
             print(ex.__str__())
 
