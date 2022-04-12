@@ -35,12 +35,12 @@ while True:
           #elaborazione della richiesta
           peer, bol = Server.login(request)
 
-          #if (bol == True):
-          #  print("Login effettuato")
+          if (bol == True):
+            print("Login effettuato")
 
             #risposta del server
-          #clientSocket.send(("ALGI" + peer.get_session_id()).encode())
-          clientSocket.send(("ALGI" + Utilities.generateSessionID()).encode())
+          clientSocket.send(("ALGI" + peer.get_session_id()).encode())
+          #clientSocket.send(("ALGI" + Utilities.generateSessionID()).encode())
 
           #else:
             #print("Login non riuscito")
@@ -60,7 +60,7 @@ while True:
             print("File aggiunto correttamente")
 
             #risposta del server
-            clientSocket.send(("AADD").encode() + ('%05d' % nCopia).encode())
+            clientSocket.send(("AADD").encode() + ('%03d' % nCopia).encode())
 
           else:
             print("Problema nell'aggiunta del file")
