@@ -25,6 +25,8 @@ class Server:
 
             #nuovo peer su db
             orm.addPeer(peer)
+
+            #creo il log
             l = Log(peer.get_session_id(), Tipo_Operazione.Login, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
             ORM.addLog(l)
             return peer, True
@@ -44,19 +46,46 @@ class Server:
         orm = ORM()
 
         try:
-            orm.addFile(md5_file, filename)
+
+            #mi prelevo l'ultima copia aggiunta
             nCopia = orm.selectCopyFile(md5_file) + 1
-            orm.addPeerFile(session_id, md5_file, nCopia)
+
+            #aggiungo il file
+            orm.addFile(md5_file, session_id, filename, nCopia)
+
+            #creo il log
             l = Log(session_id, Tipo_Operazione.AddFile, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
             ORM.addLog(l)
+
+            #ritorno il numero di copia aggiunto per il pacchetto di risposta
             return nCopia, True
+
         except Exception as ex:
             print(ex.__str__())
         return -1, False
             
     @staticmethod
-    def removeFile(socket, sessionId):
-        return ""
+    def removeFile(request):
+
+        sessionId = request[4:20]
+        md5_file = request[20:52]
+
+        orm = ORM()
+
+        try:
+            nFile = orm.deleteFile(sessionId, md5_file)
+
+            if(nFile > 0):
+                nCopie = orm.selectCopyFile(md5_file)
+                return nCopie, True
+
+            return -1, False
+
+        except Exception as ex:
+            print(ex.__str__())
+        
+        return False
+
     
     @staticmethod
     def searchFile(socket, sessionId):
@@ -77,15 +106,15 @@ class Server:
             #conto il numero di file associati a quel peer per restituirlo in risposta
             nFile = orm.countFile(sessionId)
 
-            #prelevo gli md5 dei file di quel peer per eliminarli
-            md5list = orm.selectPeerFile(sessionId)
-
-            #elimino ogni file 
-            for md in md5list:
-                orm.deleteFile(md, )
+            #elimino i file di quel peer
+            orm.deleteFile(sessionId)
             
             #elimino il peer dalla lista
             orm.deletePeer(sessionId)
+
+            #creo il log
+            l = Log(sessionId, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
+            ORM.addLog(l)
 
             return True
         except Exception as ex:
