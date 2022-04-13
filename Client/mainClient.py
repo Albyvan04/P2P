@@ -151,7 +151,7 @@ else:
                 md5 = request[4 : 36]
 
                 for file in files:
-                    if(file.fileMd5 == md5):
+                    if(file.get_md5() == md5):
                         filename = file.fileName
 
                 fd = open("sharedFiles/" + filename, "rb")
