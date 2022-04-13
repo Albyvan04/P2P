@@ -1,4 +1,3 @@
-import re
 from ssl import SOL_SOCKET
 from Classi.client import Client
 from Classi.utilities import Utilities
@@ -90,18 +89,14 @@ if(pid != 0):
 
             print("Ricezione di %s" % nameFile)
 
+            response = socketDownload.recv(15)
+            chunkNumber = int(response[4 : 10])
 
-            while True:
-                response = socketDownload.recv(15)
-                lenght = int(response[10 : 15])
-                print(lenght)
-                if lenght == 0:
-                    break
-                buf = socketDownload.recv(lenght)
+            for i in chunkNumber:
+                chunckLen = socketDownload.recv(5)
+                buf = socketDownload.recv(chunckLen)
                 print(len(buf))
                 print(buf)
-                #buf = response[15 : 15 + int(response[10 : 15].decode())]
-                
                 fd.write(buf)
 
             fd.close()
@@ -161,23 +156,26 @@ else:
 
                 fd = open("sharedFiles/" + filename, "rb")
 
-                chunkIndex = 0
+                chunks = b''
+                chunkNumber = 0
+
                 while True:
 
-                    #buf = fd.read()
-                    #request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % len(buf))).encode() + buf
-                    #print(len(request))
-                    #peerSocket.sendall(request)
-                    #break
                     buf = fd.read(CHUNKLEN)
-                    request = ("ARET" + str('%06d' % chunkIndex) +  str('%05d' % len(buf))).encode() + buf
-                    print(len(request))
-                    print(request)
-                    peerSocket.send(request, len(request))
+
                     if len(buf) == 0:
                         print("brekka tutto")
                         break
-                    chunkIndex += 1
+
+                    chunks = chunks + str('%05d' % len(buf)).encode() + buf
+                    print(len(chunks))
+                    print(chunks)
+                    
+                    chunkNumber += 1
+                
+                request = ("ARET" + str('%06d' % chunkNumber)).encode() + chunks
+
+                peerSocket.sendall(request)
 
                 fd.close()
             

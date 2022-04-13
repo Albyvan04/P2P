@@ -1,4 +1,3 @@
-from multiprocessing.connection import Client
 import os
 import socket
 from Classi.server import Server
