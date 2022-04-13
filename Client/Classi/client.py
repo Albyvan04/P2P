@@ -61,12 +61,14 @@ class Client:
 
     @staticmethod
     def showFilesData(files):
-        index = 0
+        indexFile = 1
+        indexPeer = 1
         for file in files:
-            print("\n=== " + file.fileName + " " + file.MD5)
+            print("\n===" + indexFile + ")" + file.fileName + " " + file.MD5)
+            indexFile = indexFile + 1
             for peer in file.peers:
-                print("\n     ===" + index + ")" + peer.ip + " " + peer.port)
-                index = index + 1
+                print("\n     ===" + indexPeer + ")" + peer.ip + " " + peer.port)
+                indexPeer = indexPeer + 1
 
     @staticmethod
     def downloadMenu():
