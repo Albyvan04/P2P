@@ -42,7 +42,7 @@ else:
 
 ipClient = Utilities.formatIp(s.getsockname()[0])
 #portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
-portaClient = "53000"
+portaClient = "53002"
 
 sessionID = Client.login(s, ipClient, portaClient)
 
@@ -89,11 +89,11 @@ if(pid != 0):
 
             print("Ricezione di %s" % nameFile)
 
-            response = socketDownload.recv(15)
+            response = socketDownload.recv(10)
             chunkNumber = int(response[4 : 10])
 
-            for i in chunkNumber:
-                chunckLen = socketDownload.recv(5)
+            for i in range(chunkNumber):
+                chunckLen = int(socketDownload.recv(5))
                 buf = socketDownload.recv(chunckLen)
                 print(len(buf))
                 print(buf)
@@ -102,7 +102,7 @@ if(pid != 0):
             fd.close()
             socketDownload.close()
 
-            receivedFileMd5 = Utilities.get_md5(nameFile)
+            receivedFileMd5 = Utilities.get_md5("receivedFiles/" + nameFile)
 
 
             #controllo ricezione
@@ -112,10 +112,6 @@ if(pid != 0):
             else:
                 print("Ricezione file errata")
                 os.remove(nameFile)
-
-
-            
-
             
         elif(option == 5):
             Client.logout(s, sessionID)

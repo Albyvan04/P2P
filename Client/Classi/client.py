@@ -36,7 +36,7 @@ class Client:
     def download(socket, sessionId):
         #effettuare una ricerca e far selezionare il peer da cui fare download
         #segnalazione al server dell'operazione
-        return Peer("192.168.2.96", 53000)
+        return Peer("192.168.2.96", 53002)
 
 
     @staticmethod
@@ -49,7 +49,7 @@ class Client:
 
     @staticmethod
     def reg_download(socket, sessionId, md5_file, ip, port):
-        request = "RREG" + sessionId + md5_file + ip + port
+        request = "RREG" + sessionId + md5_file + ip + str(port)
         socket.send(request.encode())
         response = socket.recv(4096).decode()
         print("Download registrato sul server") if response[0: 4] == "ARRE" else exit("Download non registrato")
