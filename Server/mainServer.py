@@ -3,10 +3,10 @@ import socket
 from Classi.server import Server
 from Classi.utilitiesServer import Utilities
 
-try:
-    exec(open("Classi/script.py").read())
-except Exception as ex:
-    print("%s" %ex)
+#try:
+#    exec(open("Classi/script.py").read())
+#except Exception as ex:
+#    print("%s" %ex)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('', 80))
