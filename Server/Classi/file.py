@@ -2,9 +2,9 @@ import hashlib
 
 class File:
     
-    def __init__(self, fileName, filePath):
+    def __init__(self, fileName, MD5):
         self.fileName = fileName
-        self.filePath = filePath
+        self.MD5 = MD5
 
     def get_md5 (self):
         file = open(self.fileName, 'rb')

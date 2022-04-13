@@ -11,8 +11,9 @@ class Client:
     def login(socket, ipClient, portaClient):
         request = "LOGI" + ipClient + portaClient
         socket.send(request.encode())
-        response = socket.recv(4096).decode()
-        return response[4 : 20] if response[0: 4] == "ALGI" else exit("Server login failed")
+        #response = socket.recv(4096).decode()
+        #return response[4 : 20] if response[0: 4] == "ALGI" else exit("Server login failed")
+        return ''
 
     @staticmethod
     def addFile(socket, sessionID, files):
@@ -29,14 +30,52 @@ class Client:
         return ""
     
     @staticmethod
-    def searchFile(socket, sessionId):
-        return ""
+    def searchFile(socket, sessionID):
+        print("Inserire il nome del file da cercare: ")
+
+        searchString = Utilities.formatString(input()[0 : 20],20)
+
+        request = "FIND" + sessionID + searchString
+
+        socket.send(request.encode())
+
+        searchedFiles = []
+
+        if socket.recv(4).decode() == "AFIN":
+            md5Number = socket.recv(3)
+            for i in range(md5Number):
+                searchedFiles.append(File(socket.recv(100).decode() , socket.recv(32).decode()))
+                peersNumber = socket.recv(3)
+                peers = []
+                for j in range(peersNumber):
+                    peers.append(Peer(socket.recv(15).decode(), socket.recv(5).decode()))
+                searchedFiles[i].addPeers(peers)
+                
+        else:
+            exit("Server search file failed")
+
+
+        Client.showFilesData(searchedFiles)
+
+        return searchedFiles
 
     @staticmethod
-    def download(socket, sessionId):
-        #effettuare una ricerca e far selezionare il peer da cui fare download
-        #segnalazione al server dell'operazione
-        return Peer("192.168.2.96", 53002)
+    def showFilesData(files):
+        index = 0
+        for file in files:
+            print("\n=== " + file.fileName + " " + file.MD5)
+            for peer in file.peers:
+                print("\n     ===" + index + ")" + peer.ip + " " + peer.port)
+                index = index + 1
+
+    @staticmethod
+    def downloadMenu():
+        print("\n= = = = = = = = =")
+        print("\n D O W N L O A D")
+        print("\n= = = = = = = = =")
+        print("\n1) Inserisci md5 e credenziali peer manualmente")
+        print("\n2) Usa i dati della precendente ricerca")
+        print("\nScegli una opzione: ")
 
 
     @staticmethod

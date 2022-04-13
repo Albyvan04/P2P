@@ -62,9 +62,29 @@ if(pid != 0):
         elif(option == 2):
             Client.removeFile(s, sessionID)
         elif(option == 3):
-            Client.searchFile(s, sessionID)
+            searchedFiles = Client.searchFile(s, sessionID)
         elif(option == 4):
-            serverDownload = Client.download(s, sessionID)
+            Client.downloadMenu()
+
+            option = int(input())
+
+            if (option == 1):
+                input("\n Inserisci un md5: ")
+                downloadMD5 = input()
+                input("\n Inserisci ip peer: ")
+                ip = input()
+                input("\n Inserisci porta peer: ")
+                port = input()
+                serverDownload = Peer(ip, port)
+            elif(option == 2):
+                if(len(searchedFiles) != 0):
+                    Client.showFilesData(searchedFiles)
+                    print("\nScegli una opzione: ")
+                    option = int(input())
+
+                else:
+                    print("\nDefi prima fare una ricerca")
+                
 
             socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
@@ -78,12 +98,9 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            fileMd5 = "549e7337254d03021342219e356a4511"
-
             request = "RETR" + fileMd5
             socketDownload.send(request.encode())
 
-            nameFile = "prova.doc"
 
             fd = open("receivedFiles/" + nameFile, "wb")
 
@@ -147,7 +164,7 @@ else:
                 md5 = request[4 : 36]
 
                 for file in files:
-                    if(file.get_md5() == md5):
+                    if(file.MD5 == md5):
                         filename = file.fileName
 
                 fd = open("sharedFiles/" + filename, "rb")
