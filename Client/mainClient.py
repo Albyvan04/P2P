@@ -78,12 +78,12 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            fileMd5 = "28ecbf09ef926a45631fa9e0bd1cec21"
+            fileMd5 = "549e7337254d03021342219e356a4511"
 
             request = "RETR" + fileMd5
             socketDownload.send(request.encode())
 
-            nameFile = "code_1.65.2-1646927742_amd64.deb"
+            nameFile = "prova.doc"
 
             fd = open("receivedFiles/" + nameFile, "wb")
 
