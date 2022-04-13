@@ -88,9 +88,31 @@ class Server:
 
     
     @staticmethod
-    def searchFile(socket, sessionId):
-        return ""
+    def searchFile(request):
+        sessionId = request[4:20]
+        ricercato = (request[20:40].decode()).strip()
 
+        orm = ORM()
+
+        try:
+            files = orm.selectfile(ricercato)
+
+            if(files.count() == 0):
+                return 0
+            else:
+                for row in files:
+                    print("ID = %s\t\t", row[0])
+                    print("Filename = %s\t\t", row[3])
+                    print("MD5 = %s\t\t", row[1])
+                    print("SessionId = %s\t\t", row[2])
+                    print("Copia = %s\t\t", row[4])
+                
+                return 1
+
+        except Exception as ex:
+            print(ex.__str__())
+
+         
     @staticmethod
     def download(socket, sessionId):
         return ""

@@ -162,9 +162,10 @@ else:
             if(request[0 : 4] == "RETR"):
 
                 md5 = request[4 : 36]
+                filename = "X10-cv-europass-it-word.doc"
 
                 for file in files:
-                    if(file.MD5 == md5):
+                    if(file.get_md5() == md5):
                         filename = file.fileName
 
                 fd = open("sharedFiles/" + filename, "rb")

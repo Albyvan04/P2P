@@ -102,10 +102,11 @@ class ORM:
             print(ex.__str__())
 
     def selectfile(self, filename):
-        query = "SELECT * FROM file WHERE filename = %s" %filename
+        query = "SELECT * FROM file WHERE filename LIKE '%s'" %filename
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
+            return cursor.fetchall()
         except Exception as ex:
             print(ex.__str__())
 
