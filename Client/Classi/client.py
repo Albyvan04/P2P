@@ -36,7 +36,7 @@ class Client:
     def download(socket, sessionId):
         #effettuare una ricerca e far selezionare il peer da cui fare download
         #segnalazione al server dell'operazione
-        return Peer("127.0.0.1", 53000)
+        return Peer("192.168.2.96", 53000)
 
 
     @staticmethod
