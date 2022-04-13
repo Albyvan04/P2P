@@ -44,7 +44,9 @@ class Client:
         if socket.recv(4).decode() == "AFIN":
             md5Number = socket.recv(3)
             for i in range(md5Number):
-                searchedFiles.append(File(socket.recv(100).decode() , socket.recv(32).decode()))
+                md5 = socket.recv(32).decode()
+                filename = socket.recv(100).decode()
+                searchedFiles.append(File(filename, md5))
                 peersNumber = socket.recv(3)
                 peers = []
                 for j in range(peersNumber):
@@ -65,10 +67,10 @@ class Client:
         indexPeer = 1
         for file in files:
             print("\n===" + indexFile + ")" + file.fileName + " " + file.MD5)
-            indexFile = indexFile + 1
+            indexFile += 1
             for peer in file.peers:
                 print("\n     ===" + indexPeer + ")" + peer.ip + " " + peer.port)
-                indexPeer = indexPeer + 1
+                indexPeer += 1
 
     @staticmethod
     def downloadMenu():

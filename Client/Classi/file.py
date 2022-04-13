@@ -5,6 +5,7 @@ class File:
     def __init__(self, fileName, MD5):
         self.fileName = fileName
         self.MD5 = MD5
+        self.peers = []
 
     def check_md5(self, md5):
         result = False
@@ -14,4 +15,4 @@ class File:
         return result
 
     def addPeers(self, peers):
-        self.peers = peers
+        self.peers.append(peers)

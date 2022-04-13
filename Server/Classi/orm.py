@@ -50,6 +50,15 @@ class ORM:
         except Exception as ex:
             print(ex.__str__())
 
+    def selectPeer(self, sessionID):
+        query = "SELECT * FROM peer WHERE session_id = %s" %(sessionID)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            return cursor.fetchone()
+        except Exception as ex:
+            print(ex.__str__())
+
     def checkPeer(self, sessionID):
         query = "SELECT * FROM peer WHERE session_id = %s" %sessionID
         cursor = self.connection.cursor()

@@ -1,9 +1,12 @@
+from operator import truediv
+from pickle import TRUE
 import socket
 import time
 from .peer import Peer
 from .orm import ORM, Tipo_Operazione
 from .log import Log
 from .utilitiesServer import Utilities
+from .file import File
 
 
 class Server:
@@ -27,7 +30,7 @@ class Server:
             orm.addPeer(peer)
 
             #creo il log
-            l = Log(peer.get_session_id(), Tipo_Operazione.Login, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
+            l = Log(peer.session_id, Tipo_Operazione.Login, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
             orm.addLog(l)
             return peer, True
 
@@ -95,17 +98,48 @@ class Server:
         orm = ORM()
 
         try:
-            files = orm.selectfile(ricercato)
+            filesTmp = orm.selectfile(ricercato)
+            files = []
+
+            for index, file in filesTmp:
+
+                isNewMD5 = True
+                indexOldMD5 = 0
+
+                for i, el  in files:
+                    if file[1] == el.MD5 :
+                        isNewMD5 = False
+                        indexOldMD5 = i
+
+        
+                if(isNewMD5):
+                    files.append(File(file[3], file[1]))
+
+                peer = orm.selectPeer(file[2])
+
+                if(isNewMD5):
+                    files[index].addPeer(Peer(peer[0], peer[1], peer[2]))
+                else:
+                    files[indexOldMD5].addPeer(Peer(peer[0], peer[1], peer[2]))
 
             if(files.count() == 0):
                 return 0
             else:
-                for row in files:
-                    print("ID = %s\t\t", row[0])
-                    print("Filename = %s\t\t", row[3])
-                    print("MD5 = %s\t\t", row[1])
-                    print("SessionId = %s\t\t", row[2])
-                    print("Copia = %s\t\t", row[4])
+
+                request = "AFIN" + str(len(files)) 
+
+                for file in files:
+
+                    # print("ID = %s\t\t", row[0])
+                    # print("Filename = %s\t\t", row[3])
+                    # print("MD5 = %s\t\t", row[1])
+                    # print("SessionId = %s\t\t", row[2])
+                    # print("Copia = %s\t\t", row[4])
+
+                    request += file.MD5 + file.fileName + len(file.peers)
+
+                    for peer in file.peers:
+                        request += peer.ip + peer.port
                 
                 return 1
 

@@ -39,7 +39,7 @@ while True:
             print("Login effettuato")
 
             #risposta del server
-            clientSocket.send(("ALGI" + peer.get_session_id()).encode())
+            clientSocket.send(("ALGI" + peer.session_id).encode())
           #clientSocket.send(("ALGI" + Utilities.generateSessionID()).encode())
 
           else:
