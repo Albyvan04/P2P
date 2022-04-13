@@ -1,83 +1,78 @@
 from ctypes import sizeof
 import hashlib
+from http import server
 import unittest
 from download import *
 from file import *
+from log import *
+from orm import *
 from peer import *
-from utilitiesServer import *
+from script import *
 from server import *
+from utilitiesServer import *
 
-#test classe download
+#test classe download funziona
 class TestDownload(unittest.TestCase):  
     def test_get_sessionID(self):
         download = Download("2394be2e1263dcd5b566494fa5d11359", "c26679467622336004c6b6a86a91248c")
-        sessionID = download.get_sessionID()
+        sessionID = download.sessionId
         self.assertEqual(sessionID, "2394be2e1263dcd5b566494fa5d11359", "Should be 2394be2e1263dcd5b566494fa5d11359")
-
     def test_get_md5file(self):
         download = Download("2394be2e1263dcd5b566494fa5d11359", "c26679467622336004c6b6a86a91248c")
-        md5 = download.get_md5file()
+        md5 = download.md5file
         self.assertEqual(md5, "c26679467622336004c6b6a86a91248c", "Should be c26679467622336004c6b6a86a91248c")
-        
-    def test_set_sessionID(self, download):
-        sessionID = "2394be2e1263dcd5b566494fa5d11359"
-        download.set_sessionID(sessionID)
-        check_sessionID = download.get_sessionID()
-        self.assertEqual(check_sessionID, "2394be2e1263dcd5b566494fa5d11359", "Should be 2394be2e1263dcd5b566494fa5d11359")
-        
-    def test_set_md5file(self, download):
-        md5_file = "c26679467622336004c6b6a86a91248c"
-        download.set_md5file(md5_file)
-        check_md5 = download.get_md5file()
-        self.assertEqual(check_md5, "c26679467622336004c6b6a86a91248c", "Should be c26679467622336004c6b6a86a91248c") 
 
-#test classe File
+
+#test classe File funziona
 class TestFile(unittest.TestCase):
-    def test_get_md5(self, file):
-        file = File("download.py", "P2P-main\Server\Classi\download.py")
-        md5_file = "b08d6481479b41f6803efe27b478d05c"
-        result = File.get_md5(file)
-        self.assertEqual(result, md5_file, "Should be b08d6481479b41f6803efe27b478d05c")
-
-    def test_check_md5(self, file):
-        file = File("download.py", "P2P-main\Server\Classi\download.py")
-        md5_file = "b08d6481479b41f6803efe27b478d05c"
-        result = File.check_md5(md5_file)
+    def test_check_md5(self):
+        file = File("file.py", "path")
+        md5 = file.get_md5()
+        result = file.check_md5(md5)
         self.assertEqual(result, True, "Should be True")
+
+    def test_get_md5(self):
+        file = File("file.py", "path")
+        md5 = "cdbf5597550e706896d49f2e37a4158b"
+        md5_ritornato = file.get_md5()
+        self.assertEqual(md5_ritornato, md5, "Should be cdbf5597550e706896d49f2e37a4158b")        
         
 #forse dopo serve test per classe log
 
 #test classe Peer
 class TestPeer(unittest.TestCase):
-    def test_set_session_id(self, peer):
+    def test_set_session_id(self):
+        peer = Peer("dba6bca8f6b6bb3365fb2bfe4d440006", "192.168.1.1", 80)
         sessionID = "61b1eb268b8b8c0b51565dc3e63788d5"
         peer.set_session_id(sessionID)
         check_peer_sessionID = peer.get_session_id()
         self.assertEqual(check_peer_sessionID, "61b1eb268b8b8c0b51565dc3e63788d5", "Should be 61b1eb268b8b8c0b51565dc3e63788d5")
-        
-    def test_set_ip(self, peer):
+       
+    def test_set_ip(self):
+        peer = Peer("dba6bca8f6b6bb3365fb2bfe4d440006", "192.168.1.1", 80)
         ip = "192.168.1.1"
         peer.set_ip(ip)
         check_ip_peer = peer.get_ip()
         self.assertEqual(check_ip_peer, "192.168.1.1", "Should be 192.168.1.1")
-        
-    def test_set_port(self, peer):
+       
+    def test_set_port(self):
+        peer = Peer("dba6bca8f6b6bb3365fb2bfe4d440006", "192.168.1.1", 80)
         port = 80
         peer.set_port(port)
         check_port_peer = peer.get_port()
         self.assertEqual(check_port_peer, 80, "Should be 80")
         
-    def test_get_session_id(self, peer):
+    def test_get_session_id(self):
         peer = Peer("b5fb4e26e0728593f1e4b8722e141643", "192.168.1.1", 80)
         sessionID = peer.get_session_id()
         self.assertEqual(sessionID, "b5fb4e26e0728593f1e4b8722e141643", "Should be b5fb4e26e0728593f1e4b8722e141643")
         
-    def test_get_ip(self, peer):
+    def test_get_ip(self):
         peer = Peer("b5fb4e26e0728593f1e4b8722e141643", "192.168.1.1", 80)
         ip = peer.get_ip()
         self.assertEqual(ip, "192.168.1.1", "Should be 192.168.1.1")
-        
-    def test_get_port(self, peer):
+       
+    def test_get_port(self):
         peer = Peer("b5fb4e26e0728593f1e4b8722e141643", "192.168.1.1", 80)
         port = peer.get_port()
         self.assertEqual(port, 80, "Should be 80")
@@ -87,7 +82,7 @@ class TestUtilities(unittest.TestCase):
     def test_generateSessionID(self):
         sessionID = Utilities.generateSessionID()
         lenght = sizeof(sessionID)
-        self.assertEqual(sessionID, lenght, "Shoulb be 16")
+        self.assertEqual(sessionID, lenght, "Should be 16")
 
 #test del server
 class TestServer(unittest.TestCase):
@@ -105,33 +100,32 @@ class TestServer(unittest.TestCase):
         peer = Peer(sessionID, "000.000.000.000", 00000)
         self.assertEqual(bool, (peer, True), "Should be True")
         
-    def test_addFile(self, socket): #da sistemare
-        #socket = .....
-        #.....
-        bool = True
-        #self.assertEqual(bool, *....*, "Should be True")
-
-    def test_removeFile(self, socket, sessionID): #da sistemare
-        #socket = .....
-        sessionID = Utilities.generateSessionID()
-        #.....
-        bool = True
-        #self.assertEqual(bool, *....*, "Should be True")
-        
-    def test_searchFile(self, socket, sessionID): #da sistemare
-        #socket = .....
-        sessionID = Utilities.generateSessionID()
-        #.....
-        bool = True
-        #self.assertEqual(bool, *....*, "Should be True")
-        
-    def test_download(self, socket, sessionID): #da sistemare
-        #socket = .....
-        sessionID = Utilities.generateSessionID()
-        #.....
-        bool = True
-        #self.assertEqual(bool, *....*, "Should be True")
-        
+#    def test_addFile(self, socket): #da sistemare
+#        #socket = .....
+#        #.....
+#        bool = True
+#        #self.assertEqual(bool, *....*, "Should be True")
+#
+#    def test_removeFile(self, socket, sessionID): #da sistemare
+#        #socket = .....
+#        sessionID = Utilities.generateSessionID()
+#        #.....
+#        bool = True
+#        #self.assertEqual(bool, *....*, "Should be True")
+#        
+#    def test_searchFile(self, socket, sessionID): #da sistemare
+#        #socket = .....
+#        sessionID = Utilities.generateSessionID()
+#        #.....
+#        bool = True
+#        #self.assertEqual(bool, *....*, "Should be True")
+#        
+#    def test_download(self, socket, sessionID): #da sistemare
+#        #socket = .....
+#        sessionID = Utilities.generateSessionID()
+#        #.....
+#        bool = True
+#        #self.assertEqual(bool, *....*, "Should be True")        
 
         
              
