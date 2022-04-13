@@ -1,9 +1,17 @@
+import hashlib
 
 class File:
-    def __init__(self, fileName, fileMd5):
+    
+    def __init__(self, fileName, filePath):
         self.fileName = fileName
-        self.fileMd5 = fileMd5
+        self.filePath = filePath
 
+    def get_md5 (self):
+        file = open(self.fileName, 'rb')
+        dati = file.read()
+        md5 = ''
+        md5 = hashlib.md5(dati).hexdigest()
+        return md5
 
     def check_md5(self, md5):
         result = False
