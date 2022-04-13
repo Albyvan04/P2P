@@ -45,22 +45,6 @@ class TestFile(unittest.TestCase):
         result = File.check_md5(md5_file)
         self.assertEqual(result, True, "Should be True")
         
-
-#test classe File probabilmente sbagliato
-"""class TestFile(unittest.TestCase):
-    def test_get_md5(self):
-        file = open("server.py", 'rb')
-        dati = file.read()
-        md5 = hashlib.md5(dati).hexdigest()
-        md5_file = "c541656ccda07039173d61567119c92e"
-        self.assertEqual(md5, "c541656ccda07039173d61567119c92e", "Should be c541656ccda07039173d61567119c92e")
-        
-    def test_check_md5(self, md5):
-        md5 = "c541656ccda07039173d61567119c92e"
-        file = File(md5, "server.py")
-        check_md5 = file.get_md5()
-        self.assertEqual(check_md5, "c541656ccda07039173d61567119c92e", "Should be c541656ccda07039173d61567119c92e")"""
-        
 #forse dopo serve test per classe log
 
 #test classe Peer
