@@ -7,7 +7,7 @@ class File:
         self.filePath = filePath
 
     def get_md5 (self):
-        file = open(self.fileName, 'rb')
+        file = open("sharedFiles/" + self.fileName, 'rb')
         dati = file.read()
         md5 = ''
         md5 = hashlib.md5(dati).hexdigest()

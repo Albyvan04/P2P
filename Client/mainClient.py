@@ -19,7 +19,7 @@ if (len(sys.argv) != 2):
     exit(0)
 
 PORTASERVER = 80
-CHUNKLEN = 4096-15
+CHUNKLEN = 4096
 ipServer = sys.argv[1]
 
 #memorizzo i file nella cartella da condividere
@@ -164,8 +164,8 @@ else:
                         break
 
                     chunks = chunks + str('%05d' % len(buf)).encode() + buf
-                    print(len(chunks))
-                    print(chunks)
+                    print(str(len(chunks)) + "\n")
+                    #print(chunks)
                     
                     chunkNumber += 1
                 
