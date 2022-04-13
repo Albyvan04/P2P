@@ -85,7 +85,7 @@ if(pid != 0):
 
             nameFile = "code_1.65.2-1646927742_amd64.deb"
 
-            fd = open(nameFile, "wb")
+            fd = open("receivedFiles/" + nameFile, "wb")
 
             print("Ricezione di %s" % nameFile)
 
