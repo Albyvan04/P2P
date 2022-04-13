@@ -163,7 +163,7 @@ class Server:
             nFile = orm.countFile(sessionId)
 
             #elimino i file di quel peer
-            orm.deleteFile(sessionId)
+            nDelete = orm.deleteFile(sessionId)
             
             #elimino il peer dalla lista
             orm.deletePeer(sessionId)
@@ -172,7 +172,7 @@ class Server:
             l = Log(sessionId, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
             orm.addLog(l)
 
-            return True
+            return nDelete, True
         except Exception as ex:
             print(ex.__str__())
         return False

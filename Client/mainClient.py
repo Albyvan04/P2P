@@ -58,10 +58,13 @@ if(pid != 0):
 
         if(option == 1):
             Client.addFile(s, sessionID, files)
+
         elif(option == 2):
             Client.removeFile(s, sessionID)
+
         elif(option == 3):
             searchedFiles = Client.searchFile(s, sessionID)
+            
         elif(option == 4):
             Client.downloadMenu()
 

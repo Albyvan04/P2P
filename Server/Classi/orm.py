@@ -140,8 +140,9 @@ class ORM:
         query = "DELETE FROM file WHERE session_id = '%s' AND md5_file = '%s'" %(sessionId, md5_file)
         cursor = self.connection.cursor()
         try:
-            if (cursor.execute(query) > 0):
-                return True
+            nDelete = cursor.execute(query)
+            if (nDelete > 0):
+                return nDelete, True
         except Exception as ex:
             print(ex.__str__())
         return False

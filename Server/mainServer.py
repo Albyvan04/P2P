@@ -93,11 +93,12 @@ while True:
         elif(request[0:4] == "LOGO"): #logout
 
           #elaborazione della richiesta
-          if(Server.logout(request) == True):
+          nDelete, bol = Server.logout(request)
+          if(bol == True):
             print("Logout effettuato")
 
             #risposta al client
-            clientSocket.send(("ALGO").encode() + ("").encode()) #manca attributo
+            clientSocket.send(("ALGO").encode() + ('%03d' % nDelete).encode())
             continueCicle = False
 
           else:
