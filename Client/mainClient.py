@@ -41,8 +41,7 @@ else:
     print("Connesso al server")
 
 ipClient = Utilities.formatIp(s.getsockname()[0])
-#portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
-portaClient = "53002"
+portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
 
 sessionID = Client.login(s, ipClient, portaClient)
 
@@ -71,17 +70,23 @@ if(pid != 0):
             if (option == 1):
                 input("\n Inserisci un md5: ")
                 downloadMD5 = input()
+                input("\n Inserisci nome del file: ")
+                fileNameDownload = input()
                 input("\n Inserisci ip peer: ")
                 ip = input()
                 input("\n Inserisci porta peer: ")
                 port = input()
+                
                 serverDownload = Peer(ip, port)
             elif(option == 2):
                 if(len(searchedFiles) != 0):
                     Client.showFilesData(searchedFiles)
-                    print("\nScegli una opzione: ")
-                    option = int(input())
-
+                    print("\nScegli una file: ")
+                    optionFile = int(input())
+                    print("\nScegli una peer: ")
+                    optionPeer = int(input())
+                    fileNameDownload = searchedFiles[optionFile -1].fileName
+                    serverDownload = searchedFiles[optionFile - 1].peers[optionPeer - 1] 
                 else:
                     print("\nDefi prima fare una ricerca")
                 
@@ -102,9 +107,9 @@ if(pid != 0):
             socketDownload.send(request.encode())
 
 
-            fd = open("receivedFiles/" + nameFile, "wb")
+            fd = open("receivedFiles/" + fileNameDownload, "wb")
 
-            print("Ricezione di %s" % nameFile)
+            print("Ricezione di %s" % fileNameDownload)
 
             response = socketDownload.recv(10)
             chunkNumber = int(response[4 : 10])
@@ -119,7 +124,7 @@ if(pid != 0):
             fd.close()
             socketDownload.close()
 
-            receivedFileMd5 = Utilities.get_md5("receivedFiles/" + nameFile)
+            receivedFileMd5 = Utilities.get_md5("receivedFiles/" + fileNameDownload)
 
 
             #controllo ricezione
@@ -128,7 +133,7 @@ if(pid != 0):
                 Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.get_ip(), serverDownload.get_port())
             else:
                 print("Ricezione file errata")
-                os.remove(nameFile)
+                os.remove(fileNameDownload)
             
         elif(option == 5):
             Client.logout(s, sessionID)
@@ -162,10 +167,9 @@ else:
             if(request[0 : 4] == "RETR"):
 
                 md5 = request[4 : 36]
-                filename = "X10-cv-europass-it-word.doc"
 
                 for file in files:
-                    if(file.get_md5() == md5):
+                    if(file.MD5 == md5):
                         filename = file.fileName
 
                 fd = open("sharedFiles/" + filename, "rb")
