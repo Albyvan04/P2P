@@ -118,13 +118,13 @@ class ORM:
         except Exception as ex:
             print(ex.__str__())
 
-    def updateFile(self, newFilename, newFilepath, md5_File):
-        query = "UPDATE file SET filename = %s, filepath = %s WHERE md5_file = %s" %(newFilename, newFilepath, md5_File)
-        cursor = self.connection.cursor()
-        try:
-            cursor.execute(query)
-        except Exception as ex:
-            print(ex.__str__())
+    # def updateFile(self, newFilename, newFilepath, md5_File):
+    #     query = "UPDATE file SET filename = %s, filepath = %s WHERE md5_file = %s" %(newFilename, newFilepath, md5_File)
+    #     cursor = self.connection.cursor()
+    #     try:
+    #         cursor.execute(query)
+    #     except Exception as ex:
+    #         print(ex.__str__())
     
     def deleteFile(self, sessionId, md5_file):
         query = "DELETE FROM file WHERE session_id = '%s' AND md5_file = '%s'" %(sessionId, md5_file)
