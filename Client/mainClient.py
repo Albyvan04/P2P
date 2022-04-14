@@ -1,4 +1,3 @@
-from ssl import SOL_SOCKET
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -91,7 +90,7 @@ if(pid != 0):
                     fileNameDownload = searchedFiles[optionFile -1].fileName
                     serverDownload = searchedFiles[optionFile - 1].peers[optionPeer - 1] 
                 else:
-                    print("\nDefi prima fare una ricerca")
+                    print("\nDevi prima fare una ricerca")
                 
 
             socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -11,9 +11,8 @@ class Client:
     def login(socket, ipClient, portaClient):
         request = "LOGI" + ipClient + portaClient
         socket.send(request.encode())
-        #response = socket.recv(4096).decode()
-        #return response[4 : 20] if response[0: 4] == "ALGI" else exit("Server login failed")
-        return ''
+        response = socket.recv(4096).decode()
+        return response[4 : 20] if response[0: 4] == "ALGI" else exit("Server login failed")
 
     @staticmethod
     def addFile(socket, sessionID, files):
@@ -22,7 +21,7 @@ class Client:
             request = "ADDF" + sessionID + file.fileMd5 + Utilities.formatString(file.fileName, 100)
             socket.send(request.encode())
             response = socket.recv(4096).decode()
-            print("File aggiunto") if response[0: 4] == "AADD" else exit("Server add file failed")
+            print("File aggiunto") if response[0: 4] == "AADD" else print("Server add file failed")
 
 
     @staticmethod
@@ -54,7 +53,7 @@ class Client:
                 searchedFiles[i].addPeers(peers)
                 
         else:
-            exit("Server search file failed")
+            print("Server search file failed")
 
 
         Client.showFilesData(searchedFiles)
@@ -87,7 +86,7 @@ class Client:
         request = "LOGO" + sessionId
         socket.send(request.encode())
         response = socket.recv(4096).decode()
-        print("Logout effettuato") if response[0: 4] == "ALGO" else exit("Server logout failed")
+        print("Logout effettuato") if response[0: 4] == "ALGO" else print("Server logout failed")
 
 
     @staticmethod
@@ -95,7 +94,7 @@ class Client:
         request = "RREG" + sessionId + md5_file + ip + str(port)
         socket.send(request.encode())
         response = socket.recv(4096).decode()
-        print("Download registrato sul server") if response[0: 4] == "ARRE" else exit("Download non registrato")
+        print("Download registrato sul server") if response[0: 4] == "ARRE" else print("Download non registrato")
 
 
 
