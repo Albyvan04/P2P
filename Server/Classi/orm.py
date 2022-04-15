@@ -46,12 +46,14 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            return cursor.fetchone()
+            peer = cursor.fetchone()
+            peer = Peer(peer["session_id"], peer["ip_peer"], peer["port_peer"])
+            return peer
         except Exception as ex:
             print(ex.__str__())
 
     def selectPeer(self, sessionID):
-        query = "SELECT * FROM peer WHERE session_id = %s" %(sessionID)
+        query = "SELECT * FROM peer WHERE session_id = '%s'" %(sessionID)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)

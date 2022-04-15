@@ -1,4 +1,3 @@
-from pickle import TRUE
 import socket
 import time
 from .peer import Peer
@@ -147,7 +146,7 @@ class Server:
 
          
     @staticmethod
-    def download(socket, sessionId):
+    def download(request):
         return ""
 
     @staticmethod
