@@ -74,8 +74,11 @@ class Server:
         orm = ORM()
 
         try:
+
+            #elimino il file
             nFile = orm.deleteFile(sessionId, md5_file)
 
+            #
             if(nFile > 0):
                 nCopie = orm.selectCopyFile(md5_file)
                 return nCopie, True
@@ -85,7 +88,7 @@ class Server:
         except Exception as ex:
             print(ex.__str__())
         
-        return False
+        return -1, False
 
     
     @staticmethod
