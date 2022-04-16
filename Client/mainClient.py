@@ -1,4 +1,3 @@
-from ssl import SOL_SOCKET
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -19,7 +18,7 @@ if (len(sys.argv) != 2):
     exit(0)
 
 PORTASERVER = 80
-CHUNKLEN = 4096-15
+CHUNKLEN = 4096
 ipServer = sys.argv[1]
 
 #memorizzo i file nella cartella da condividere
@@ -28,7 +27,10 @@ filesName = os.listdir("sharedFiles")
 for fileName in filesName:
     fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
     print(fileMd5)
-    files.append(File(fileName, fileMd5))       
+    file = File(fileName, fileMd5)
+    print("%s %s" %(file.fileName, file.MD5))
+    files.append(File(fileName, fileMd5))
+   
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -41,10 +43,10 @@ else:
     print("Connesso al server")
 
 ipClient = Utilities.formatIp(s.getsockname()[0])
-#portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
-portaClient = "53000"
+portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
 
 sessionID = Client.login(s, ipClient, portaClient)
+print("Il mio SESSION ID: %s" %sessionID)
 
 #genero un secondo processo per gestire il download da altri peer
 pid = os.fork()
@@ -59,12 +61,41 @@ if(pid != 0):
 
         if(option == 1):
             Client.addFile(s, sessionID, files)
+
         elif(option == 2):
             Client.removeFile(s, sessionID)
+
         elif(option == 3):
-            Client.searchFile(s, sessionID)
+            searchedFiles = Client.searchFile(s, sessionID)
+            
         elif(option == 4):
-            serverDownload = Client.download(s, sessionID)
+            Client.downloadMenu()
+
+            option = int(input())
+
+            if (option == 1):
+                input("\n Inserisci un md5: ")
+                downloadMD5 = input()
+                input("\n Inserisci nome del file: ")
+                fileNameDownload = input()
+                input("\n Inserisci ip peer: ")
+                ip = input()
+                input("\n Inserisci porta peer: ")
+                port = input()
+                
+                serverDownload = Peer(ip, port)
+            elif(option == 2):
+                if(len(searchedFiles) != 0):
+                    Client.showFilesData(searchedFiles)
+                    print("\nScegli una file: ")
+                    optionFile = int(input())
+                    print("\nScegli una peer: ")
+                    optionPeer = int(input())
+                    fileNameDownload = searchedFiles[optionFile -1].fileName
+                    serverDownload = searchedFiles[optionFile - 1].peers[optionPeer - 1] 
+                else:
+                    print("\nDevi prima fare una ricerca")
+                
 
             socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
@@ -78,22 +109,19 @@ if(pid != 0):
             else:
                 print("Connesso al servizio di download")
 
-            fileMd5 = "28ecbf09ef926a45631fa9e0bd1cec21"
-
             request = "RETR" + fileMd5
             socketDownload.send(request.encode())
 
-            nameFile = "code_1.65.2-1646927742_amd64.deb"
 
-            fd = open(nameFile, "wb")
+            fd = open("receivedFiles/" + fileNameDownload, "wb")
 
-            print("Ricezione di %s" % nameFile)
+            print("Ricezione di %s" % fileNameDownload)
 
-            response = socketDownload.recv(15)
+            response = socketDownload.recv(10)
             chunkNumber = int(response[4 : 10])
 
-            for i in chunkNumber:
-                chunckLen = socketDownload.recv(5)
+            for i in range(chunkNumber):
+                chunckLen = int(socketDownload.recv(5))
                 buf = socketDownload.recv(chunckLen)
                 print(len(buf))
                 print(buf)
@@ -102,7 +130,7 @@ if(pid != 0):
             fd.close()
             socketDownload.close()
 
-            receivedFileMd5 = Utilities.get_md5(nameFile)
+            receivedFileMd5 = Utilities.get_md5("receivedFiles/" + fileNameDownload)
 
 
             #controllo ricezione
@@ -111,11 +139,7 @@ if(pid != 0):
                 Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.get_ip(), serverDownload.get_port())
             else:
                 print("Ricezione file errata")
-                os.remove(nameFile)
-
-
-            
-
+                os.remove(fileNameDownload)
             
         elif(option == 5):
             Client.logout(s, sessionID)
@@ -151,7 +175,7 @@ else:
                 md5 = request[4 : 36]
 
                 for file in files:
-                    if(file.fileMd5 == md5):
+                    if(file.MD5 == md5):
                         filename = file.fileName
 
                 fd = open("sharedFiles/" + filename, "rb")
@@ -168,8 +192,8 @@ else:
                         break
 
                     chunks = chunks + str('%05d' % len(buf)).encode() + buf
-                    print(len(chunks))
-                    print(chunks)
+                    print(str(len(chunks)) + "\n")
+                    #print(chunks)
                     
                     chunkNumber += 1
                 
@@ -186,11 +210,3 @@ else:
             print("In ascolto di richieste di download...")
 
             os._exit(1)
-
-
-
-
-
-
-
-
