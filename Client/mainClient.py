@@ -59,7 +59,16 @@ if(pid != 0):
             Client.addFile(s, sessionID, files)
 
         elif(option == 2):
+            #da sistemare
             Client.removeFile(s, sessionID)
+            md5Remove = "" #md5 file da rimuovere(da vedere come farselo ritornare)
+            newFiles = []
+            filesName = os.listdir("sharedFiles")
+            for fileName in filesName:
+                fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
+                if fileMd5 != md5Remove:
+                    newFiles.append(File(fileName, fileMd5))
+            Client.addFile(s, sessionID, newFiles)
 
         elif(option == 3):
             searchedFiles = Client.searchFile(s, sessionID)
