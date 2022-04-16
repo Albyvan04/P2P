@@ -26,7 +26,18 @@ class Client:
 
     @staticmethod
     def removeFile(socket, sessionId):
-        return ""
+
+        print("Inserire md5 del file da rimuovere: ")
+
+        fileMd5 = input()[0:32]
+
+        request = "DELF" + sessionId + fileMd5
+
+        socket.send(request.encode())
+
+        response = socket.recv(4096).decode()
+
+        print("File rimosso") if response[0:4] == "ADEL" else print("Server remove file failed")
     
     @staticmethod
     def searchFile(socket, sessionID):
