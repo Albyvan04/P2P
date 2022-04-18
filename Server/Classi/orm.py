@@ -33,7 +33,7 @@ class ORM:
     #region PEER
 
     def addPeer(self, peer):
-        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES ('%s', '%s', '%s')" %(peer.get_session_id(), peer.get_ip(), peer.get_port())
+        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES ('%s', '%s', '%s')" %(peer.session_id, peer.ip, peer.port)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -76,8 +76,8 @@ class ORM:
         try:
             cursor.execute(query)
             print("Peer rimosso correttamente")
-            l = Log(sessionID, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
-            self.addLog(l)
+            #l = Log(sessionID, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
+            #self.addLog(l)
         except Exception as ex:
             print(ex.__str__())
 
@@ -143,11 +143,25 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             nDelete = cursor.execute(query)
-            if (nDelete > 0):
-                return nDelete, True
+            if nDelete == None:
+                nDelete = 0
+            return nDelete
         except Exception as ex:
             print(ex.__str__())
-        return False
+        return -1
+
+    def deleteAllFile(self, sessionID):
+        query = "DELETE FROM file WHERE session_id = '%s'" %sessionID
+        cursor = self.connection.cursor()
+        try:
+            nDelete = cursor.execute(query)
+            print(nDelete)
+            if nDelete == None:
+                nDelete = 0
+            return nDelete
+        except Exception as ex:
+            print(ex.__str__())
+        return -1
 
     def selectPeerFile(self, sessionID):
         query = "SELECT * FROM file WHERE session_id = '%s'" %(sessionID)
@@ -168,9 +182,14 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            return cursor.fetchone()
+            copie = cursor.fetchone()
+            if copie[0] == None:
+                return -1
+            else:
+                return copie[0]
         except Exception as ex:
             print(ex.__str__())
+        return -1
 
     def countFile(self, sessionId):
         query = "SELECT COUNT(*) FROM file WHERE session_id = '%s'" %sessionId
@@ -213,3 +232,4 @@ class Tipo_Operazione(Enum):
     SearchFile = 5,
     DownloadFile = 6,
     SearchPeer = 7,
+

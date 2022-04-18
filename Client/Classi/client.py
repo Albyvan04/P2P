@@ -10,23 +10,39 @@ class Client:
     @staticmethod
     def login(socket, ipClient, portaClient):
         request = "LOGI" + ipClient + portaClient
+        print(">%s" %request)
         socket.send(request.encode())
         response = socket.recv(4096).decode()
+        print("<%s" %response)
         return response[4 : 20] if response[0: 4] == "ALGI" else exit("Server login failed")
 
     @staticmethod
     def addFile(socket, sessionID, files):
-        files = []
+        #files = []
         for file in files:
-            request = "ADDF" + sessionID + file.fileMd5 + Utilities.formatString(file.fileName, 100)
+            request = "ADDF" + sessionID + file.MD5 + Utilities.formatString(file.fileName, 100)
+            print(">%s" %request)
             socket.send(request.encode())
             response = socket.recv(4096).decode()
+            print("<%s" %response)
             print("File aggiunto") if response[0: 4] == "AADD" else print("Server add file failed")
 
 
     @staticmethod
-    def removeFile(socket, sessionId):
-        return ""
+    def removeFile(socket, sessionId, files):
+        print("Inserire md5 del file da rimuovere: ")
+        removeMd5 = input()[0:32]
+        request = "DELF" + sessionId + removeMd5
+        socket.send(request.encode())
+        response = socket.recv(4096).decode()
+        updateFiles = []
+        for file in files:
+            fileMd5 = Utilities.get_md5("sharedFiles/" + file.fileName)
+            if fileMd5 != removeMd5:
+                file = File(file.fileName, fileMd5)
+                updateFiles.append(file)
+        files = updateFiles
+        print("File rimosso") if response[0:4] == "ADEL" else print("Server remove file failed")
     
     @staticmethod
     def searchFile(socket, sessionID):
@@ -84,8 +100,10 @@ class Client:
     @staticmethod
     def logout(socket, sessionId):
         request = "LOGO" + sessionId
+        print(">%s" %request)
         socket.send(request.encode())
         response = socket.recv(4096).decode()
+        print("<%s" %response)
         print("Logout effettuato") if response[0: 4] == "ALGO" else print("Server logout failed")
 
 

@@ -3,10 +3,10 @@ import socket
 from Classi.server import Server
 from Classi.utilitiesServer import Utilities
 
-#try:
-#    exec(open("Classi/script.py").read())
-#except Exception as ex:
-#    print("%s" %ex)
+try:
+    exec(open("Classi/script.py").read())
+except Exception as ex:
+    print("%s" %ex)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('', 80))
@@ -43,6 +43,7 @@ while True:
           #clientSocket.send(("ALGI" + Utilities.generateSessionID()).encode())
 
           else:
+            clientSocket.send(("ALGI" + "0000000000000000").encode())
             print("Login non riuscito")
         #endregion
 
@@ -72,10 +73,9 @@ while True:
             print("File rimosso correttamente")
 
             #risposta del server
-            clientSocket.send(("ADEL").encode() + ('%03d' % nCopie).encode())
-
           else:
             print("Problema con la rimozione del file")
+          clientSocket.send(("ADEL").encode() + ('%03d' % nCopie).encode())
 
         #endregion
 
@@ -92,16 +92,18 @@ while True:
 
         #region LOGOUT
         elif(request[0:4] == "LOGO"): #logout
+          print(">%s", request)
 
           #elaborazione della richiesta
           nDelete, bol = Server.logout(request)
+          print(nDelete)
+          print(bol)
           if(bol == True):
             print("Logout effettuato")
-
             #risposta al client
             clientSocket.send(("ALGO").encode() + ('%03d' % nDelete).encode())
             continueCicle = False
-
+            clientSocket.close()
           else:
             print("Logout fallito")
 
@@ -118,3 +120,4 @@ while True:
       print("Connessione chiusa\n")
       clientSocket.close()
       os._exit(1)
+

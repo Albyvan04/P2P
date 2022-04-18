@@ -21,13 +21,19 @@ PORTASERVER = 80
 CHUNKLEN = 4096
 ipServer = sys.argv[1]
 
+md5Prova = Utilities.get_md5("sharedFiles/" + "logmein-hamachi_2.1.0.203-1_i386.deb")
+print(md5Prova)
+
 #memorizzo i file nella cartella da condividere
 files = []
 filesName = os.listdir("sharedFiles")
 for fileName in filesName:
     fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
     print(fileMd5)
-    files.append(File(fileName, fileMd5))       
+    file = File(fileName, fileMd5)
+    print("%s %s" %(file.fileName, file.MD5))
+    files.append(File(fileName, fileMd5))
+   
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -43,6 +49,7 @@ ipClient = Utilities.formatIp(s.getsockname()[0])
 portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
 
 sessionID = Client.login(s, ipClient, portaClient)
+print("Il mio SESSION ID: %s" %sessionID)
 
 #genero un secondo processo per gestire il download da altri peer
 pid = os.fork()
@@ -53,13 +60,13 @@ if(pid != 0):
 
     option = int(input())
 
-    while(option != 5):
+    while(True):
 
         if(option == 1):
             Client.addFile(s, sessionID, files)
 
         elif(option == 2):
-            Client.removeFile(s, sessionID)
+            Client.removeFile(s, sessionID, files)
 
         elif(option == 3):
             searchedFiles = Client.searchFile(s, sessionID)
@@ -140,6 +147,8 @@ if(pid != 0):
             
         elif(option == 5):
             Client.logout(s, sessionID)
+            s.close()
+            exit()
 
 
 
@@ -207,11 +216,3 @@ else:
             print("In ascolto di richieste di download...")
 
             os._exit(1)
-
-
-
-
-
-
-
-
