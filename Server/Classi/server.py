@@ -76,14 +76,14 @@ class Server:
         try:
 
             #elimino il file
-            nFile = orm.deleteFile(sessionId, md5_file)
-
-            #
-            if(nFile > 0):
-                nCopie = orm.selectCopyFile(md5_file)
+            bol = orm.deleteFile(sessionId, md5_file)
+            nCopie = orm.selectCopyFile(md5_file)
+            if(bol == True):
+                l = Log(sessionId, Tipo_Operazione.DeleteFile, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
+                orm.addLog(l)
                 return nCopie, True
 
-            return -1, False
+            return nCopie, False
 
         except Exception as ex:
             print(ex.__str__())
@@ -148,35 +148,37 @@ class Server:
             print(ex.__str__())
 
          
-    @staticmethod
-    def download(request):
-        return ""
+    #@staticmethod
+    #def download(request):
+    #    return ""
 
     @staticmethod
     def logout(request):
-
         sessionId = request[4:20]
         orm = ORM()
 
         try:
-            
             #conto il numero di file associati a quel peer per restituirlo in risposta
             nFile = orm.countFile(sessionId)
-
+            print("Numero file condivisi: %d"%nFile)
             #elimino i file di quel peer
-            nDelete = orm.deleteFile(sessionId)
+            nDelete = orm.deleteAllFile(sessionId)
+            if nDelete <= 0:
+                print("Il peer non ha condiviso nessun file")
+            else:
+                print("Sono stati rimossi %d file" %nDelete)
+            #print("Numero file eliminati: %d" %nDelete)
             
-            #elimino il peer dalla lista
-            orm.deletePeer(sessionId)
-
             #creo il log
             l = Log(sessionId, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
             orm.addLog(l)
 
+            #elimino il peer dalla lista
+            orm.deletePeer(sessionId)
             return nDelete, True
         except Exception as ex:
             print(ex.__str__())
-        return False
+        return -1, False
 
     @staticmethod
     def reg_download(request):
@@ -196,4 +198,5 @@ class Server:
         except Exception as ex:
             print(ex.__str__())
         return -1, False
+
 
