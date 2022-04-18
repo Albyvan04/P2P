@@ -21,6 +21,9 @@ PORTASERVER = 80
 CHUNKLEN = 4096
 ipServer = sys.argv[1]
 
+md5Prova = Utilities.get_md5("sharedFiles/" + "logmein-hamachi_2.1.0.203-1_i386.deb")
+print(md5Prova)
+
 #memorizzo i file nella cartella da condividere
 files = []
 filesName = os.listdir("sharedFiles")
@@ -57,13 +60,13 @@ if(pid != 0):
 
     option = int(input())
 
-    while(option != 5):
+    while(True):
 
         if(option == 1):
             Client.addFile(s, sessionID, files)
 
         elif(option == 2):
-            a = 0
+            Client.removeFile(s, sessionID, files)
 
         elif(option == 3):
             searchedFiles = Client.searchFile(s, sessionID)
@@ -143,6 +146,8 @@ if(pid != 0):
             
         elif(option == 5):
             Client.logout(s, sessionID)
+            s.close()
+            exit()
 
 
 
@@ -210,3 +215,11 @@ else:
             print("In ascolto di richieste di download...")
 
             os._exit(1)
+
+
+
+
+
+
+
+
