@@ -33,7 +33,7 @@ class ORM:
     #region PEER
 
     def addPeer(self, peer):
-        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES ('%s', '%s', '%s')" %(peer.get_session_id(), peer.get_ip(), peer.get_port())
+        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES ('%s', '%s', '%s')" %(peer.session_id, peer.ip, peer.port)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -168,9 +168,14 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            return cursor.fetchone()
+            copie = cursor.fetchone()
+            if copie[0] == None:
+                return -1
+            else:
+                return copie[0]
         except Exception as ex:
             print(ex.__str__())
+        return -1
 
     def countFile(self, sessionId):
         query = "SELECT COUNT(*) FROM file WHERE session_id = '%s'" %sessionId
