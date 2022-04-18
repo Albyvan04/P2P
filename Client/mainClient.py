@@ -70,16 +70,17 @@ if(pid != 0):
             option = int(input())
 
             if (option == 1):
-                input("\n Inserisci un md5: ")
+                print("\nInserisci un md5:")
                 downloadMD5 = input()
-                input("\n Inserisci nome del file: ")
+                print("\nInserisci nome del file:")
                 fileNameDownload = input()
-                input("\n Inserisci ip peer: ")
+                print("\nInserisci ip peer:")
                 ip = input()
-                input("\n Inserisci porta peer: ")
+                print("\nInserisci porta peer:")
                 port = input()
                 
                 serverDownload = Peer(ip, port)
+
             elif(option == 2):
                 if(len(searchedFiles) != 0):
                     Client.showFilesData(searchedFiles)
@@ -95,10 +96,10 @@ if(pid != 0):
 
             socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-            print(serverDownload.get_ip(), serverDownload.get_port())
+            print(serverDownload.ip, serverDownload.port)
 
             try:
-                socketDownload.connect((serverDownload.get_ip(), serverDownload.get_port()))
+                socketDownload.connect((serverDownload.ip, serverDownload.port))
             except:
                 print("Errore di connessione al servizio di download")
                 exit(0)
