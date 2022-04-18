@@ -39,7 +39,7 @@ while True:
             print("Login effettuato")
 
             #risposta del server
-            clientSocket.send(("ALGI" + peer.get_session_id()).encode())
+            clientSocket.send(("ALGI" + peer.session_id).encode())
           #clientSocket.send(("ALGI" + Utilities.generateSessionID()).encode())
 
           else:
@@ -82,22 +82,24 @@ while True:
         #region FIND FILE
         elif(request[0:4] == "FIND"):
           Server.searchFile(request)
+          #restituire il pacchetto
         #endregion
 
-        #region DOWNLOAD FILE
-        elif(request[0:4] == "RETR"):
-          Server.download(request)
-        #endregion
+        ##region DOWNLOAD FILE
+        #elif(request[0:4] == "RETR"):
+        #  Server.download(request)
+        ##endregion
 
         #region LOGOUT
         elif(request[0:4] == "LOGO"): #logout
 
           #elaborazione della richiesta
-          if(Server.logout(request) == True):
+          nDelete, bol = Server.logout(request)
+          if(bol == True):
             print("Logout effettuato")
 
             #risposta al client
-            clientSocket.send(("ALGO").encode() + ("").encode()) #manca attributo
+            clientSocket.send(("ALGO").encode() + ('%03d' % nDelete).encode())
             continueCicle = False
 
           else:

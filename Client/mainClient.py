@@ -63,7 +63,7 @@ if(pid != 0):
             Client.addFile(s, sessionID, files)
 
         elif(option == 2):
-            Client.removeFile(s, sessionID)
+            a = 0
 
         elif(option == 3):
             searchedFiles = Client.searchFile(s, sessionID)

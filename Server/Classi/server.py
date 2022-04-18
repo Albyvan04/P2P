@@ -4,6 +4,7 @@ from .peer import Peer
 from .orm import ORM, Tipo_Operazione
 from .log import Log
 from .utilitiesServer import Utilities
+from .file import File
 
 
 class Server:
@@ -27,7 +28,7 @@ class Server:
             orm.addPeer(peer)
 
             #creo il log
-            l = Log(peer.get_session_id(), Tipo_Operazione.Login, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
+            l = Log(peer.session_id, Tipo_Operazione.Login, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
             orm.addLog(l)
             return peer, True
 
@@ -73,8 +74,11 @@ class Server:
         orm = ORM()
 
         try:
+
+            #elimino il file
             nFile = orm.deleteFile(sessionId, md5_file)
 
+            #
             if(nFile > 0):
                 nCopie = orm.selectCopyFile(md5_file)
                 return nCopie, True
@@ -84,15 +88,68 @@ class Server:
         except Exception as ex:
             print(ex.__str__())
         
-        return False
+        return -1, False
 
     
     @staticmethod
-    def searchFile(socket, sessionId):
-        return ""
+    def searchFile(request):
+        sessionId = request[4:20]
+        ricercato = (request[20:40].decode()).strip()
 
+        orm = ORM()
+
+        try:
+            filesTmp = orm.selectfile(ricercato)
+            files = []
+
+            for index, file in filesTmp:
+
+                isNewMD5 = True
+                indexOldMD5 = 0
+
+                for i, el  in files:
+                    if file[1] == el.MD5 :
+                        isNewMD5 = False
+                        indexOldMD5 = i
+
+        
+                if(isNewMD5):
+                    files.append(File(file[3], file[1]))
+
+                peer = orm.selectPeer(file[2])
+
+                if(isNewMD5):
+                    files[index].addPeer(Peer(peer[0], peer[1], peer[2]))
+                else:
+                    files[indexOldMD5].addPeer(Peer(peer[0], peer[1], peer[2]))
+
+            if(files.count() == 0):
+                return 0
+            else:
+
+                request = "AFIN" + str(len(files)) 
+
+                for file in files:
+
+                    # print("ID = %s\t\t", row[0])
+                    # print("Filename = %s\t\t", row[3])
+                    # print("MD5 = %s\t\t", row[1])
+                    # print("SessionId = %s\t\t", row[2])
+                    # print("Copia = %s\t\t", row[4])
+
+                    request += file.MD5 + file.fileName + len(file.peers)
+
+                    for peer in file.peers:
+                        request += peer.ip + peer.port
+                
+                return 1
+
+        except Exception as ex:
+            print(ex.__str__())
+
+         
     @staticmethod
-    def download(socket, sessionId):
+    def download(request):
         return ""
 
     @staticmethod
@@ -107,7 +164,7 @@ class Server:
             nFile = orm.countFile(sessionId)
 
             #elimino i file di quel peer
-            orm.deleteFile(sessionId)
+            nDelete = orm.deleteFile(sessionId)
             
             #elimino il peer dalla lista
             orm.deletePeer(sessionId)
@@ -116,7 +173,7 @@ class Server:
             l = Log(sessionId, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
             orm.addLog(l)
 
-            return True
+            return nDelete, True
         except Exception as ex:
             print(ex.__str__())
         return False
@@ -139,3 +196,4 @@ class Server:
         except Exception as ex:
             print(ex.__str__())
         return -1, False
+

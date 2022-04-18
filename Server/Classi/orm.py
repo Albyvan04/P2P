@@ -33,7 +33,7 @@ class ORM:
     #region PEER
 
     def addPeer(self, peer):
-        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES ('%s', '%s', '%s')" %(peer.get_session_id(), peer.get_ip(), peer.get_port())
+        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES ('%s', '%s', '%s')" %(peer.session_id, peer.ip, peer.port)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -43,6 +43,17 @@ class ORM:
 
     def selectPeer(self, ip, port):
         query = "SELECT * FROM peer WHERE ip_peer = %s AND port_peer = %s" %(ip, port)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            peer = cursor.fetchone()
+            peer = Peer(peer["session_id"], peer["ip_peer"], peer["port_peer"])
+            return peer
+        except Exception as ex:
+            print(ex.__str__())
+
+    def selectPeer(self, sessionID):
+        query = "SELECT * FROM peer WHERE session_id = '%s'" %(sessionID)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -102,10 +113,11 @@ class ORM:
             print(ex.__str__())
 
     def selectfile(self, filename):
-        query = "SELECT * FROM file WHERE filename = %s" %filename
+        query = "SELECT * FROM file WHERE filename LIKE '%s'" %filename
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
+            return cursor.fetchall()
         except Exception as ex:
             print(ex.__str__())
 
@@ -130,8 +142,9 @@ class ORM:
         query = "DELETE FROM file WHERE session_id = '%s' AND md5_file = '%s'" %(sessionId, md5_file)
         cursor = self.connection.cursor()
         try:
-            if (cursor.execute(query) > 0):
-                return True
+            nDelete = cursor.execute(query)
+            if (nDelete > 0):
+                return nDelete, True
         except Exception as ex:
             print(ex.__str__())
         return False
@@ -155,9 +168,14 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            return cursor.fetchone()
+            copie = cursor.fetchone()
+            if copie[0] == None:
+                return -1
+            else:
+                return copie[0]
         except Exception as ex:
             print(ex.__str__())
+        return -1
 
     def countFile(self, sessionId):
         query = "SELECT COUNT(*) FROM file WHERE session_id = '%s'" %sessionId

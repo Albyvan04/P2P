@@ -3,6 +3,6 @@
     "DB_NAME": "napster", 
     "USER": "postgres", 
     "PSW": "password", 
-    "IP": "192.168.2.96", 
+    "IP": "localhost", 
     "PORT": "5432"
 }

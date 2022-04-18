@@ -2,9 +2,10 @@ import hashlib
 
 class File:
     
-    def __init__(self, fileName, filePath):
+    def __init__(self, fileName, MD5):
         self.fileName = fileName
-        self.filePath = filePath
+        self.MD5 = MD5
+        self.peers = []
 
     def get_md5 (self):
         file = open(self.fileName, 'rb')
@@ -19,3 +20,6 @@ class File:
         if(md5 == md5_file):
             result = True
         return result
+
+    def addPeer(self, peers):
+        self.peers.append(peers)
