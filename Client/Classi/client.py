@@ -29,18 +29,19 @@ class Client:
 
 
     @staticmethod
-    def removeFile(socket, sessionId):
-
+    def removeFile(socket, sessionId, files):
         print("Inserire md5 del file da rimuovere: ")
-
-        fileMd5 = input()[0:32]
-
-        request = "DELF" + sessionId + fileMd5
-
+        removeMd5 = input()[0:32]
+        request = "DELF" + sessionId + removeMd5
         socket.send(request.encode())
-
         response = socket.recv(4096).decode()
-
+        updateFiles = []
+        for file in files:
+            fileMd5 = Utilities.get_md5("sharedFiles/" + file.fileName)
+            if fileMd5 != removeMd5:
+                file = File(file.fileName, fileMd5)
+                updateFiles.append(file)
+        files = updateFiles
         print("File rimosso") if response[0:4] == "ADEL" else print("Server remove file failed")
     
     @staticmethod
@@ -87,7 +88,6 @@ class Client:
                 indexPeer += 1
 
     @staticmethod
-
     def downloadMenu():
         print("\n= = = = = = = = =")
         print("\n D O W N L O A D")
@@ -100,8 +100,10 @@ class Client:
     @staticmethod
     def logout(socket, sessionId):
         request = "LOGO" + sessionId
+        print(">%s" %request)
         socket.send(request.encode())
         response = socket.recv(4096).decode()
+        print("<%s" %response)
         print("Logout effettuato") if response[0: 4] == "ALGO" else print("Server logout failed")
 
 
