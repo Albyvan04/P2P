@@ -27,7 +27,10 @@ filesName = os.listdir("sharedFiles")
 for fileName in filesName:
     fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
     print(fileMd5)
-    files.append(File(fileName, fileMd5))       
+    file = File(fileName, fileMd5)
+    print("%s %s" %(file.fileName, file.MD5))
+    files.append(File(fileName, fileMd5))
+   
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -43,6 +46,7 @@ ipClient = Utilities.formatIp(s.getsockname()[0])
 portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
 
 sessionID = Client.login(s, ipClient, portaClient)
+print("Il mio SESSION ID: %s" %sessionID)
 
 #genero un secondo processo per gestire il download da altri peer
 pid = os.fork()
@@ -59,16 +63,7 @@ if(pid != 0):
             Client.addFile(s, sessionID, files)
 
         elif(option == 2):
-            #da sistemare
-            Client.removeFile(s, sessionID)
-            md5Remove = "" #md5 file da rimuovere(da vedere come farselo ritornare)
-            newFiles = []
-            filesName = os.listdir("sharedFiles")
-            for fileName in filesName:
-                fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
-                if fileMd5 != md5Remove:
-                    newFiles.append(File(fileName, fileMd5))
-            Client.addFile(s, sessionID, newFiles)
+            a = 0
 
         elif(option == 3):
             searchedFiles = Client.searchFile(s, sessionID)
@@ -215,11 +210,3 @@ else:
             print("In ascolto di richieste di download...")
 
             os._exit(1)
-
-
-
-
-
-
-
-
