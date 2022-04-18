@@ -1,220 +1,239 @@
-from Classi.client import Client
-from Classi.utilities import Utilities
-from Classi.file import File
-from Classi.peer import Peer
-import socket
-import sys
-import random
-import os
+import psycopg2
+import json
+import time
+from .peer import Peer
+from .log import Log
+from enum import Enum
 
-#ARGV
-#ARGV[0] = null
-#ARGV[1] = IP SERVER
-
-# Verifica dei dati immessi
-
-if (len(sys.argv) != 2):
-    print("\nI parametri passati non sono corretti.\nFormato nomeFile ipServer.")
-    exit(0)
-
-PORTASERVER = 80
-CHUNKLEN = 4096
-ipServer = sys.argv[1]
-
-#memorizzo i file nella cartella da condividere
-files = []
-filesName = os.listdir("sharedFiles")
-for fileName in filesName:
-    fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
-    print(fileMd5)
-    files.append(File(fileName, fileMd5))       
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-try:
-    s.connect((ipServer, PORTASERVER))
-except:
-    print("Errore di connessione al server")
-    exit(0)
-else:
-    print("Connesso al server")
-
-ipClient = Utilities.formatIp(s.getsockname()[0])
-portaClient = Utilities.formatPort(str(random.randint(49152,65535)))
-
-sessionID = Client.login(s, ipClient, portaClient)
-
-#genero un secondo processo per gestire il download da altri peer
-pid = os.fork()
-
-if(pid != 0):
-
-    Client.showMenu()
-
-    option = int(input())
-
-    while(option != 5):
-
-        if(option == 1):
-            Client.addFile(s, sessionID, files)
-
-        elif(option == 2):
-            #da sistemare
-            Client.removeFile(s, sessionID)
-            md5Remove = "" #md5 file da rimuovere(da vedere come farselo ritornare)
-            newFiles = []
-            filesName = os.listdir("sharedFiles")
-            for fileName in filesName:
-                fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
-                if fileMd5 != md5Remove:
-                    newFiles.append(File(fileName, fileMd5))
-            Client.addFile(s, sessionID, newFiles)
-
-        elif(option == 3):
-            searchedFiles = Client.searchFile(s, sessionID)
+class ORM:
+    
+    #costruttore
+    def __init__(self):
+        try:
             
-        elif(option == 4):
-            Client.downloadMenu()
+            #lettura file json di configurazione server db
+            filename = "Classi/config.json"
+            with open(filename, "r") as dictionary:
+                configDict = json.load(dictionary)
 
-            option = int(input())
+            #connessione al server
+            self.connection = psycopg2.connect(
+                database = configDict["DB_NAME"], 
+                user = configDict["USER"], 
+                password = configDict["PSW"], 
+                host = configDict["IP"], 
+                port = configDict["PORT"]
+                )
+            
+            self.connection.autocommit = True
 
-            if (option == 1):
-                input("\n Inserisci un md5: ")
-                downloadMD5 = input()
-                input("\n Inserisci nome del file: ")
-                fileNameDownload = input()
-                input("\n Inserisci ip peer: ")
-                ip = input()
-                input("\n Inserisci porta peer: ")
-                port = input()
-                
-                serverDownload = Peer(ip, port)
-            elif(option == 2):
-                if(len(searchedFiles) != 0):
-                    Client.showFilesData(searchedFiles)
-                    print("\nScegli una file: ")
-                    optionFile = int(input())
-                    print("\nScegli una peer: ")
-                    optionPeer = int(input())
-                    fileNameDownload = searchedFiles[optionFile -1].fileName
-                    serverDownload = searchedFiles[optionFile - 1].peers[optionPeer - 1] 
-                else:
-                    print("\nDevi prima fare una ricerca")
-                
+        except Exception as ex:
+            print(ex.__str__())
 
-            socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-            print(serverDownload.get_ip(), serverDownload.get_port())
+    #region PEER
 
-            try:
-                socketDownload.connect((serverDownload.get_ip(), serverDownload.get_port()))
-            except:
-                print("Errore di connessione al servizio di download")
-                exit(0)
+    def addPeer(self, peer):
+        query = "INSERT INTO peer (session_id, ip_peer, port_peer) VALUES ('%s', '%s', '%s')" %(peer.session_id, peer.ip, peer.port)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            print("Peer aggiunto correttamente")
+        except Exception as ex:
+            print(ex.__str__())
+
+    def selectPeer(self, ip, port):
+        query = "SELECT * FROM peer WHERE ip_peer = %s AND port_peer = %s" %(ip, port)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            peer = cursor.fetchone()
+            peer = Peer(peer["session_id"], peer["ip_peer"], peer["port_peer"])
+            return peer
+        except Exception as ex:
+            print(ex.__str__())
+
+    def selectPeer(self, sessionID):
+        query = "SELECT * FROM peer WHERE session_id = '%s'" %(sessionID)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            return cursor.fetchone()
+        except Exception as ex:
+            print(ex.__str__())
+
+    def checkPeer(self, sessionID):
+        query = "SELECT * FROM peer WHERE session_id = %s" %sessionID
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            return cursor.fetchall()
+        except Exception as ex:
+            print(ex.__str__())
+
+    def deletePeer(self, sessionID):
+        query = "DELETE FROM peer WHERE session_id = '%s'" %sessionID
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            print("Peer rimosso correttamente")
+            #l = Log(sessionID, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
+            #self.addLog(l)
+        except Exception as ex:
+            print(ex.__str__())
+
+    #endregion
+
+    #region LOG
+    def addLog(self, log):
+        query = "INSERT INTO log (session_id, data, ora, operazione) VALUES('%s', '%s', '%s', '%s')" %(log.sessionID, log.data, log.ora, log.tipo_operazione.__str__())
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            print("Log creato")
+        except Exception as ex:
+            print(ex.__str__())
+
+    def selectLog(self, sessionID):
+        query = "SELECT * FROM log WHERE session_id = '%s'" %sessionID
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+        except Exception as ex:
+            print(ex.__str__())
+
+    #endregion
+
+    #region FILE
+    def addFile(self, md5_File, sessionId, filename, copia):
+        query = "INSERT INTO file (md5_file, filename, session_id, copia) VALUES('%s', '%s', '%s', '%s')" %(md5_File, filename, sessionId, copia)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+        except Exception as ex:
+            print(ex.__str__())
+
+    def selectfile(self, filename):
+        query = "SELECT * FROM file WHERE filename LIKE '%s'" %filename
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            return cursor.fetchall()
+        except Exception as ex:
+            print(ex.__str__())
+
+    def selectIDfile(self, sessionID, md5_file):
+        query = "SELECT id FROM file WHERE session_id = '%s' and md5_file = '%s'" %(sessionID, md5_file)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            return cursor.fetchone()
+        except Exception as ex:
+            print(ex.__str__())
+
+    # def updateFile(self, newFilename, newFilepath, md5_File):
+    #     query = "UPDATE file SET filename = %s, filepath = %s WHERE md5_file = %s" %(newFilename, newFilepath, md5_File)
+    #     cursor = self.connection.cursor()
+    #     try:
+    #         cursor.execute(query)
+    #     except Exception as ex:
+    #         print(ex.__str__())
+    
+    def deleteFile(self, sessionId, md5_file):
+        query = "DELETE FROM file WHERE session_id = '%s' AND md5_file = '%s'" %(sessionId, md5_file)
+        cursor = self.connection.cursor()
+        try:
+            nDelete = cursor.execute(query)
+            if nDelete == None:
+                nDelete = 0
+            return nDelete
+        except Exception as ex:
+            print(ex.__str__())
+        return -1
+
+    def deleteAllFile(self, sessionID):
+        query = "DELETE FROM file WHERE session_id = '%s'" %sessionID
+        cursor = self.connection.cursor()
+        try:
+            nDelete = cursor.execute(query)
+            print(nDelete)
+            if nDelete == None:
+                nDelete = 0
+            return nDelete
+        except Exception as ex:
+            print(ex.__str__())
+        return -1
+
+    def selectPeerFile(self, sessionID):
+        query = "SELECT * FROM file WHERE session_id = '%s'" %(sessionID)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+
+            md5list = []
+            for el in cursor.fetchall():
+                md5list.append(el["md5_file"])
+            
+            return md5list
+        except Exception as ex:
+            print(ex.__str__())
+
+    def selectCopyFile(self, md5_file):
+        query = "SELECT MAX(copia) FROM file WHERE md5_file = '%s'" %md5_file
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            copie = cursor.fetchone()
+            if copie[0] == None:
+                return -1
             else:
-                print("Connesso al servizio di download")
+                return copie[0]
+        except Exception as ex:
+            print(ex.__str__())
+        return -1
 
-            request = "RETR" + fileMd5
-            socketDownload.send(request.encode())
+    def countFile(self, sessionId):
+        query = "SELECT COUNT(*) FROM file WHERE session_id = '%s'" %sessionId
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            nFile = cursor.fetchone()
+            return nFile
+        except Exception as ex:
+            print(ex.__str__())
+    
+    #endregion
+
+    #region DOWNLOAD
+    def addDownload(self, sessionId, id_file):
+        query = "INSERT INTO download (session_id, id_file) VALUES('%s', '%d')" %(sessionId, id_file)
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            print("Download registrato nel database")
+        except Exception as ex:
+            print(ex.__str__())
+
+    def countDownload(self, md5_file):
+        query = "SELECT COUNT(*) FROM download WHERE md5_file = '%s'" %md5_file
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query)
+            return cursor.fetchone()
+        except Exception as ex:
+            print(ex.__str__())
+    #endregion
+
+#enumeratore tipo di operazione per log
+class Tipo_Operazione(Enum):
+    Login = 1,
+    Logout = 2,
+    AddFile = 3,
+    DeleteFile = 4,
+    SearchFile = 5,
+    DownloadFile = 6,
+    SearchPeer = 7,
 
 
-            fd = open("receivedFiles/" + fileNameDownload, "wb")
-
-            print("Ricezione di %s" % fileNameDownload)
-
-            response = socketDownload.recv(10)
-            chunkNumber = int(response[4 : 10])
-
-            for i in range(chunkNumber):
-                chunckLen = int(socketDownload.recv(5))
-                buf = socketDownload.recv(chunckLen)
-                print(len(buf))
-                print(buf)
-                fd.write(buf)
-
-            fd.close()
-            socketDownload.close()
-
-            receivedFileMd5 = Utilities.get_md5("receivedFiles/" + fileNameDownload)
-
-
-            #controllo ricezione
-            if(receivedFileMd5 == fileMd5):
-                print("File ricevuto correttamente")
-                Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.get_ip(), serverDownload.get_port())
-            else:
-                print("Ricezione file errata")
-                os.remove(fileNameDownload)
-            
-        elif(option == 5):
-            Client.logout(s, sessionID)
-
-
-
-        Client.showMenu()
-
-        option = int(input())
-
-    s.close()
-
-else:
-
-    socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socketDownload.bind(('', int(portaClient)))
-    socketDownload.listen(10)
-    print("In ascolto di richieste di download...")
-
-    while True:
-
-        peerSocket, clientAddress = socketDownload.accept()
-        print("Richiesta accettata")
-
-        #gestione download concorrente
-        pid = os.fork()
-        if pid == 0:
-        
-            request = str(peerSocket.recv(4096).decode())
-
-            if(request[0 : 4] == "RETR"):
-
-                md5 = request[4 : 36]
-
-                for file in files:
-                    if(file.MD5 == md5):
-                        filename = file.fileName
-
-                fd = open("sharedFiles/" + filename, "rb")
-
-                chunks = b''
-                chunkNumber = 0
-
-                while True:
-
-                    buf = fd.read(CHUNKLEN)
-
-                    if len(buf) == 0:
-                        print("brekka tutto")
-                        break
-
-                    chunks = chunks + str('%05d' % len(buf)).encode() + buf
-                    print(str(len(chunks)) + "\n")
-                    #print(chunks)
-                    
-                    chunkNumber += 1
-                
-                request = ("ARET" + str('%06d' % chunkNumber)).encode() + chunks
-
-                peerSocket.sendall(request)
-
-                fd.close()
-            
-            print("Connessione chiusa\n")
-
-            peerSocket.close()
-            
-            print("In ascolto di richieste di download...")
-
-            os._exit(1)
 
 
 
