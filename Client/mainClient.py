@@ -86,6 +86,7 @@ if(pid != 0):
                     print("\nScegli una peer: ")
                     optionPeer = int(input())
                     fileNameDownload = searchedFiles[optionFile -1].fileName
+                    downloadMD5 = searchedFiles[optionFile -1].MD5
                     serverDownload = searchedFiles[optionFile - 1].peers[optionPeer - 1] 
                 else:
                     print("\nDevi prima fare una ricerca")
@@ -105,7 +106,7 @@ if(pid != 0):
                 else:
                     print("Connesso al servizio di download")
 
-                request = "RETR" + fileMd5
+                request = "RETR" + downloadMD5
                 socketDownload.send(request.encode())
 
 
@@ -130,7 +131,7 @@ if(pid != 0):
 
 
                 #controllo ricezione
-                if(receivedFileMd5 == fileMd5):
+                if(receivedFileMd5 == downloadMD5):
                     print("File ricevuto correttamente")
                     Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.get_ip(), serverDownload.get_port())
                 else:
