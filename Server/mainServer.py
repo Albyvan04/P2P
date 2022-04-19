@@ -85,11 +85,6 @@ while True:
           #restituire il pacchetto
         #endregion
 
-        ##region DOWNLOAD FILE
-        #elif(request[0:4] == "RETR"):
-        #  Server.download(request)
-        ##endregion
-
         #region LOGOUT
         elif(request[0:4] == "LOGO"): #logout
           print(">%s", request)
