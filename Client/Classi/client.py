@@ -48,7 +48,7 @@ class Client:
     def searchFile(socket, sessionID):
         print("Inserire il nome del file da cercare: ")
 
-        searchString = Utilities.formatString(input()[0 : 20],20)
+        searchString = Utilities.formatString((input()[0 : 20]).strip(),20)
 
         request = "FIND" + sessionID + searchString
 

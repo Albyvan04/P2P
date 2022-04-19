@@ -47,6 +47,8 @@ class Server:
         orm = ORM()
 
         try:
+            if (orm.selectIDfile(session_id, md5_file) != None):
+                orm.deleteFile(session_id, md5_file)
 
             #mi prelevo l'ultima copia aggiunta
             nCopia = orm.selectCopyFile(md5_file) + 1
@@ -94,15 +96,17 @@ class Server:
     @staticmethod
     def searchFile(request):
         sessionId = request[4:20]
-        ricercato = (request[20:40].decode()).strip()
+        ricercato = request[20:40].replace('|', '')
+        #print(ricercato)
 
         orm = ORM()
 
         try:
             filesTmp = orm.selectfile(ricercato)
             files = []
+            index = 0
 
-            for index, file in filesTmp:
+            for file in filesTmp:
 
                 isNewMD5 = True
                 indexOldMD5 = 0
@@ -122,6 +126,8 @@ class Server:
                     files[index].addPeer(Peer(peer[0], peer[1], peer[2]))
                 else:
                     files[indexOldMD5].addPeer(Peer(peer[0], peer[1], peer[2]))
+
+                index += 1
 
             if(files.count() == 0):
                 return "AFIN000"

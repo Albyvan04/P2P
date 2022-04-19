@@ -117,7 +117,9 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            return cursor.fetchall()
+            lista = cursor.fetchall()
+            print(lista)
+            return lista
         except Exception as ex:
             print(ex.__str__())
 
@@ -126,7 +128,9 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            return cursor.fetchone()
+            id = cursor.fetchone()
+            print(id)
+            return id
         except Exception as ex:
             print(ex.__str__())
 
@@ -142,13 +146,11 @@ class ORM:
         query = "DELETE FROM file WHERE session_id = '%s' AND md5_file = '%s'" %(sessionId, md5_file)
         cursor = self.connection.cursor()
         try:
-            nDelete = cursor.execute(query)
-            if nDelete == None:
-                nDelete = 0
-            return nDelete
+            cursor.execute(query)
+            return True
         except Exception as ex:
             print(ex.__str__())
-        return -1
+        return False
 
     def deleteAllFile(self, sessionID):
         query = "DELETE FROM file WHERE session_id = '%s'" %sessionID
