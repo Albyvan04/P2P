@@ -1,6 +1,7 @@
-from fileinput import filename
 import hashlib
 import re
+import os
+from .file import File
 
 class Utilities:
 
@@ -12,6 +13,18 @@ class Utilities:
             ipSplitted[i] = '%03d' % int(ipSplitted[i])
             i += 1
         return '.'.join(ipSplitted)
+
+    @staticmethod
+    def readSharedFiles():
+        files = []
+        filesName = os.listdir("sharedFiles")
+        for fileName in filesName:
+            fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
+            file = File(fileName, fileMd5)
+            print("%s %s" %(file.fileName, file.MD5))
+            files.append(File(fileName, fileMd5))
+        return files
+
 
 
     @staticmethod
