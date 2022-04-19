@@ -1,6 +1,5 @@
 class Peer:
 
-    def __init__(self, session_id, ip, port):
-        self.session_id = session_id
+    def __init__(self, ip, port):
         self.ip = ip
         self.port = port
