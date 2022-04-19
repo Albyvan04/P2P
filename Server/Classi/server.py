@@ -147,10 +147,6 @@ class Server:
         except Exception as ex:
             print(ex.__str__())
 
-         
-    #@staticmethod
-    #def download(request):
-    #    return ""
 
     @staticmethod
     def logout(request):

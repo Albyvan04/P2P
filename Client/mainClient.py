@@ -29,12 +29,10 @@ files = []
 filesName = os.listdir("sharedFiles")
 for fileName in filesName:
     fileMd5 = Utilities.get_md5("sharedFiles/" + fileName)
-    print(fileMd5)
     file = File(fileName, fileMd5)
     print("%s %s" %(file.fileName, file.MD5))
     files.append(File(fileName, fileMd5))
    
-
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
@@ -155,8 +153,6 @@ if(pid != 0):
         Client.showMenu()
 
         option = int(input())
-
-    s.close()
 
 else:
 
