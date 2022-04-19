@@ -124,10 +124,10 @@ class Server:
                     files[indexOldMD5].addPeer(Peer(peer[0], peer[1], peer[2]))
 
             if(files.count() == 0):
-                return 0
+                return "AFIN000"
             else:
 
-                request = "AFIN" + str(len(files)) 
+                request = "AFIN" + '%03d' % len(files) 
 
                 for file in files:
 
@@ -137,12 +137,12 @@ class Server:
                     # print("SessionId = %s\t\t", row[2])
                     # print("Copia = %s\t\t", row[4])
 
-                    request += file.MD5 + file.fileName + len(file.peers)
+                    request += file.MD5 + file.fileName + '%03d' % len(file.peers)
 
                     for peer in file.peers:
                         request += peer.ip + peer.port
                 
-                return 1
+                return request
 
         except Exception as ex:
             print(ex.__str__())

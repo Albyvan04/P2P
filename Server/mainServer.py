@@ -81,8 +81,9 @@ while True:
 
         #region FIND FILE
         elif(request[0:4] == "FIND"):
-          Server.searchFile(request)
+          request = Server.searchFile(request)
           #restituire il pacchetto
+          clientSocket.send(request.encode())
         #endregion
 
         #region LOGOUT

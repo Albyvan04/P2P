@@ -99,49 +99,51 @@ if(pid != 0):
                     print("\nDevi prima fare una ricerca")
                 
 
-            socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-            print(serverDownload.ip, serverDownload.port)
+            if serverDownload.ip != "":
 
-            try:
-                socketDownload.connect((serverDownload.ip, serverDownload.port))
-            except:
-                print("Errore di connessione al servizio di download")
-                exit(0)
-            else:
-                print("Connesso al servizio di download")
+                socketDownload = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                socketDownload.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+                print(serverDownload.ip, serverDownload.port)
 
-            request = "RETR" + fileMd5
-            socketDownload.send(request.encode())
+                try:
+                    socketDownload.connect((serverDownload.ip, serverDownload.port))
+                except:
+                    print("Errore di connessione al servizio di download")
+                    exit(0)
+                else:
+                    print("Connesso al servizio di download")
 
-
-            fd = open("receivedFiles/" + fileNameDownload, "wb")
-
-            print("Ricezione di %s" % fileNameDownload)
-
-            response = socketDownload.recv(10)
-            chunkNumber = int(response[4 : 10])
-
-            for i in range(chunkNumber):
-                chunckLen = int(socketDownload.recv(5))
-                buf = socketDownload.recv(chunckLen)
-                print(len(buf))
-                print(buf)
-                fd.write(buf)
-
-            fd.close()
-            socketDownload.close()
-
-            receivedFileMd5 = Utilities.get_md5("receivedFiles/" + fileNameDownload)
+                request = "RETR" + fileMd5
+                socketDownload.send(request.encode())
 
 
-            #controllo ricezione
-            if(receivedFileMd5 == fileMd5):
-                print("File ricevuto correttamente")
-                Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.get_ip(), serverDownload.get_port())
-            else:
-                print("Ricezione file errata")
-                os.remove(fileNameDownload)
+                fd = open("receivedFiles/" + fileNameDownload, "wb")
+
+                print("Ricezione di %s" % fileNameDownload)
+
+                response = socketDownload.recv(10)
+                chunkNumber = int(response[4 : 10])
+
+                for i in range(chunkNumber):
+                    chunckLen = int(socketDownload.recv(5))
+                    buf = socketDownload.recv(chunckLen)
+                    print(len(buf))
+                    print(buf)
+                    fd.write(buf)
+
+                fd.close()
+                socketDownload.close()
+
+                receivedFileMd5 = Utilities.get_md5("receivedFiles/" + fileNameDownload)
+
+
+                #controllo ricezione
+                if(receivedFileMd5 == fileMd5):
+                    print("File ricevuto correttamente")
+                    Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.get_ip(), serverDownload.get_port())
+                else:
+                    print("Ricezione file errata")
+                    os.remove(fileNameDownload)
             
         elif(option == 5):
             Client.logout(s, sessionID)
