@@ -102,7 +102,11 @@ class Server:
         orm = ORM()
 
         try:
-            filesTmp = orm.selectfile(ricercato)
+            filesTmp, bol = orm.selectfile(ricercato)
+
+            if(bol == False):
+                return "AFIN000"
+
             files = []
             index = 0
 
@@ -129,11 +133,9 @@ class Server:
 
                 index += 1
 
-            if(files.count() == 0):
-                return "AFIN000"
             else:
 
-                request = "AFIN" + '%03d' % len(files) 
+                request = "AFIN" + '%03d' % len(files)
 
                 for file in files:
 
@@ -146,7 +148,7 @@ class Server:
                     request += file.MD5 + file.fileName + '%03d' % len(file.peers)
 
                     for peer in file.peers:
-                        request += peer.ip + peer.port
+                        request += peer.ip + str(peer.port)
                 
                 return request
 

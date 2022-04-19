@@ -9,7 +9,7 @@ except Exception as ex:
     print("%s" %ex)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('', 50001))
+s.bind(('', 80))
 s.listen(10)
 print("In ascolto...")
 

@@ -15,4 +15,4 @@ class File:
         return result
 
     def addPeers(self, peers):
-        self.peers.append(peers)
+        self.peers = peers

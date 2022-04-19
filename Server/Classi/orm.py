@@ -113,15 +113,19 @@ class ORM:
             print(ex.__str__())
 
     def selectfile(self, filename):
-        query = "SELECT * FROM file WHERE filename LIKE '%s'" %filename
+        query = "SELECT * FROM file WHERE filename LIKE '%" + filename + "%'"
+        print(query)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
             lista = cursor.fetchall()
-            print(lista)
-            return lista
+            if(len(lista) != 0):
+                return lista, True
+            else:
+                return lista, False
         except Exception as ex:
             print(ex.__str__())
+        return None, False
 
     def selectIDfile(self, sessionID, md5_file):
         query = "SELECT id FROM file WHERE session_id = '%s' and md5_file = '%s'" %(sessionID, md5_file)

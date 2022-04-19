@@ -57,12 +57,12 @@ class Client:
         searchedFiles = []
 
         if socket.recv(4).decode() == "AFIN":
-            md5Number = socket.recv(3)
+            md5Number = int(socket.recv(3))
             for i in range(md5Number):
                 md5 = socket.recv(32).decode()
                 filename = socket.recv(100).decode()
                 searchedFiles.append(File(filename, md5))
-                peersNumber = socket.recv(3)
+                peersNumber = int(socket.recv(3))
                 peers = []
                 for j in range(peersNumber):
                     peers.append(Peer(socket.recv(15).decode(), socket.recv(5).decode()))
@@ -81,10 +81,10 @@ class Client:
         indexFile = 1
         indexPeer = 1
         for file in files:
-            print("\n===" + indexFile + ")" + file.fileName + " " + file.MD5)
+            print("\n===" + str(indexFile) + ")" + file.fileName + " " + file.MD5)
             indexFile += 1
             for peer in file.peers:
-                print("\n     ===" + indexPeer + ")" + peer.ip + " " + peer.port)
+                print("\n     ===" + str(indexPeer) + ")" + peer.ip + " " + str(peer.port))
                 indexPeer += 1
 
     @staticmethod
