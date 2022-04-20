@@ -100,7 +100,6 @@ if(pid != 0):
                 print(serverDownload.ip, serverDownload.port)
 
                 try:
-                    print (Utilities.formatIpDownload("192.168.002.095"))
                     socketDownload.connect((Utilities.formatIpDownload(serverDownload.ip), int(serverDownload.port)))
                 except Exception as ex :
                     print("Errore di connessione al servizio di download")
