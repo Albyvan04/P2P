@@ -1,3 +1,4 @@
+from logging import exception
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -85,7 +86,7 @@ if(pid != 0):
                     optionFile = int(input())
                     print("\nScegli una peer: ")
                     optionPeer = int(input())
-                    fileNameDownload = searchedFiles[optionFile -1].fileName
+                    fileNameDownload = searchedFiles[optionFile -1].fileName.replace('|', '')
                     downloadMD5 = searchedFiles[optionFile -1].MD5
                     serverDownload = searchedFiles[optionFile - 1].peers[optionPeer - 1] 
                 else:
@@ -99,9 +100,11 @@ if(pid != 0):
                 print(serverDownload.ip, serverDownload.port)
 
                 try:
-                    socketDownload.connect((serverDownload.ip, serverDownload.port))
-                except:
+                    print (Utilities.formatIpDownload("192.168.002.095"))
+                    socketDownload.connect((Utilities.formatIpDownload(serverDownload.ip), int(serverDownload.port)))
+                except Exception as ex :
                     print("Errore di connessione al servizio di download")
+                    print(ex.__str__())
                     exit(0)
                 else:
                     print("Connesso al servizio di download")
@@ -120,8 +123,6 @@ if(pid != 0):
                 for i in range(chunkNumber):
                     chunckLen = int(socketDownload.recv(5))
                     buf = socketDownload.recv(chunckLen)
-                    print(len(buf))
-                    print(buf)
                     fd.write(buf)
 
                 fd.close()
@@ -133,7 +134,7 @@ if(pid != 0):
                 #controllo ricezione
                 if(receivedFileMd5 == downloadMD5):
                     print("File ricevuto correttamente")
-                    Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.get_ip(), serverDownload.get_port())
+                    Client.reg_download(s, sessionID, receivedFileMd5, serverDownload.ip, serverDownload.port)
                 else:
                     print("Ricezione file errata")
                     os.remove(fileNameDownload)
