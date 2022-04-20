@@ -114,7 +114,7 @@ class ORM:
 
     def selectfile(self, filename):
         query = "SELECT * FROM file WHERE filename LIKE '%" + filename + "%'"
-        print(query)
+        #print(query)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -133,7 +133,7 @@ class ORM:
         try:
             cursor.execute(query)
             id = cursor.fetchone()
-            print(id)
+            #print(id)
             return id
         except Exception as ex:
             print(ex.__str__())
@@ -160,11 +160,8 @@ class ORM:
         query = "DELETE FROM file WHERE session_id = '%s'" %sessionID
         cursor = self.connection.cursor()
         try:
-            nDelete = cursor.execute(query)
-            print(nDelete)
-            if nDelete == None:
-                nDelete = 0
-            return nDelete
+            cursor.execute(query)
+            return 1
         except Exception as ex:
             print(ex.__str__())
         return -1

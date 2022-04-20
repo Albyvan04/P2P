@@ -166,11 +166,11 @@ class Server:
             nFile = orm.countFile(sessionId)
             print("Numero file condivisi: %d"%nFile)
             #elimino i file di quel peer
-            nDelete = orm.deleteAllFile(sessionId)
-            if nDelete <= 0:
+            orm.deleteAllFile(sessionId)
+            if nFile <= 0:
                 print("Il peer non ha condiviso nessun file")
             else:
-                print("Sono stati rimossi %d file" %nDelete)
+                print("Sono stati rimossi %d file" %nFile)
             #print("Numero file eliminati: %d" %nDelete)
             
             #creo il log
@@ -179,7 +179,7 @@ class Server:
 
             #elimino il peer dalla lista
             orm.deletePeer(sessionId)
-            return nDelete, True
+            return nFile, True
         except Exception as ex:
             print(ex.__str__())
         return -1, False
