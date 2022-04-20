@@ -192,8 +192,8 @@ class Server:
         port = request[67:72]
         orm = ORM()
         try:
-            id_peer = orm.selectPeer(ip, port)
-            id_file = orm.selectIDfile(id_peer, md5_file)
+            peer = orm.selectPPeer(ip, port)
+            id_file = orm.selectIDfile(peer.session_id, md5_file)
             orm.addDownload(sessionID, id_file)
             nDownload = orm.countDownload(md5_file)
             l = Log(sessionID, Tipo_Operazione.DownloadFile, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))

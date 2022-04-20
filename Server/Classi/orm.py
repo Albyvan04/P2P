@@ -41,7 +41,7 @@ class ORM:
         except Exception as ex:
             print(ex.__str__())
 
-    def selectPeer(self, ip, port):
+    def selectPPeer(self, ip, port):
         query = "SELECT * FROM peer WHERE ip_peer = %s AND port_peer = %s" %(ip, port)
         cursor = self.connection.cursor()
         try:
