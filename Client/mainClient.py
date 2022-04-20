@@ -189,7 +189,7 @@ else:
                         break
 
                     chunks = chunks + str('%05d' % len(buf)).encode() + buf
-                    print(str(len(chunks)) + "\n")
+                    #print(str(len(chunks)) + "\n")
                     #print(chunks)
                     
                     chunkNumber += 1
