@@ -42,7 +42,7 @@ class ORM:
             print(ex.__str__())
 
     def selectPPeer(self, ip, port):
-        query = "SELECT * FROM peer WHERE ip_peer = %s AND port_peer = %s" %(ip, port)
+        query = "SELECT * FROM peer WHERE ip_peer = '%s' AND port_peer = '%s'" %(ip, port)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -235,4 +235,3 @@ class Tipo_Operazione(Enum):
     SearchFile = 5,
     DownloadFile = 6,
     SearchPeer = 7,
-
