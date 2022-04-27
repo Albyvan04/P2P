@@ -51,4 +51,4 @@ class Utilities:
 
     @staticmethod
     def formatString(string, lenght):
-        return string.rjust(lenght, '|')
+        return string.rjust(lenght)
