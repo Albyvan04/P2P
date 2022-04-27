@@ -81,7 +81,7 @@ class Client:
         indexFile = 1
         indexPeer = 1
         for file in files:
-            print("\n===" + str(indexFile) + ")" + file.fileName.replace('|', '') + " " + file.MD5)
+            print("\n===" + str(indexFile) + ")" + file.fileName.replace(' ', '') + " " + file.MD5)
             indexFile += 1
             for peer in file.peers:
                 print("\n     ===" + str(indexPeer) + ")" + peer.ip + " " + str(peer.port))
