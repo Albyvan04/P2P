@@ -86,7 +86,7 @@ if(pid != 0):
                     optionFile = int(input())
                     print("\nScegli una peer: ")
                     optionPeer = int(input())
-                    fileNameDownload = searchedFiles[optionFile -1].fileName.replace('|', '')
+                    fileNameDownload = searchedFiles[optionFile -1].fileName.replace(' ', '')
                     downloadMD5 = searchedFiles[optionFile -1].MD5
                     serverDownload = searchedFiles[optionFile - 1].peers[optionPeer - 1] 
                 else:
