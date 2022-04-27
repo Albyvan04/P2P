@@ -96,7 +96,7 @@ class Server:
     @staticmethod
     def searchFile(request):
         sessionId = request[4:20]
-        ricercato = request[20:40].replace('|', '')
+        ricercato = request[20:40].replace(' ', '')
         #print(ricercato)
 
         orm = ORM()
@@ -202,5 +202,4 @@ class Server:
         except Exception as ex:
             print(ex.__str__())
         return -1, False
-
 
