@@ -42,7 +42,9 @@ class ORM:
             print(ex.__str__())
 
     def selectPPeer(self, ip, port):
-        query = "SELECT * FROM peer WHERE ip_peer = '%s' AND port_peer = '%s'" %(ip, port)
+        print(ip)
+        print(port)
+        query = "SELECT * FROM peer WHERE ip_peer = '%s' AND port_peer = %d" %(ip, int(port))
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -200,7 +202,7 @@ class ORM:
         try:
             cursor.execute(query)
             nFile = cursor.fetchone()
-            return nFile
+            return nFile[0]
         except Exception as ex:
             print(ex.__str__())
     
@@ -214,7 +216,7 @@ class ORM:
             cursor.execute(query)
             print("Download registrato nel database")
         except Exception as ex:
-            print(ex.__str__())
+            print("orm", ex.__str__())
 
     def countDownload(self, md5_file):
         query = "SELECT COUNT(*) FROM download WHERE md5_file = '%s'" %md5_file
@@ -235,3 +237,4 @@ class Tipo_Operazione(Enum):
     SearchFile = 5,
     DownloadFile = 6,
     SearchPeer = 7,
+

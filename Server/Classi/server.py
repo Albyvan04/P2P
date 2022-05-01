@@ -200,6 +200,7 @@ class Server:
             orm.addLog(l)
             return nDownload, True   
         except Exception as ex:
-            print(ex.__str__())
+            print("serv", ex.__str__())
         return -1, False
+
 

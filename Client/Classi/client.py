@@ -10,10 +10,10 @@ class Client:
     @staticmethod
     def login(socket, ipClient, portaClient):
         request = "LOGI" + ipClient + portaClient
-        print(">%s" %request)
+        #print(">%s" %request)
         socket.send(request.encode())
         response = socket.recv(4096).decode()
-        print("<%s" %response)
+        #print("<%s" %response)
         return response[4 : 20] if response[0: 4] == "ALGI" else exit("Server login failed")
 
     @staticmethod
@@ -21,10 +21,10 @@ class Client:
         #files = []
         for file in files:
             request = "ADDF" + sessionID + file.MD5 + Utilities.formatString(file.fileName, 100)
-            print(">%s" %request)
+            #print(">%s" %request)
             socket.send(request.encode())
             response = socket.recv(4096).decode()
-            print("<%s" %response)
+            #print("<%s" %response)
             print("File aggiunto") if response[0: 4] == "AADD" else print("Server add file failed")
 
 
@@ -100,11 +100,11 @@ class Client:
     @staticmethod
     def logout(socket, sessionId):
         request = "LOGO" + sessionId
-        print(">%s" %request)
+        #print(">%s" %request)
         socket.send(request.encode())
         response = socket.recv(4096).decode()
-        print("<%s" %response)
-        print("Logout effettuato") if response[0: 4] == "ALGO" else print("Server logout failed")
+        #print("<%s" %response)
+        print("\nLogout effettuato") if response[0: 4] == "ALGO" else print("Server logout failed")
 
 
     @staticmethod

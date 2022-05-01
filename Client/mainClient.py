@@ -1,4 +1,3 @@
-from logging import exception
 from Classi.client import Client
 from Classi.utilities import Utilities
 from Classi.file import File
@@ -68,24 +67,18 @@ if(pid != 0):
             option = int(input())
 
             if (option == 1):
-                print("\nInserisci un md5:")
-                downloadMD5 = input()
-                print("\nInserisci nome del file:")
-                fileNameDownload = input()
-                print("\nInserisci ip peer:")
-                ip = input()
-                print("\nInserisci porta peer:")
-                port = input()
+                downloadMD5 = input("\nInserisci un md5:")
+                fileNameDownload = input("\nInserisci nome del file:")
+                ip = input("\nInserisci ip peer:")
+                port = input("\nInserisci porta peer:")
                 
                 serverDownload = Peer(ip, port)
 
             elif(option == 2):
                 if(len(searchedFiles) != 0):
                     Client.showFilesData(searchedFiles)
-                    print("\nScegli una file: ")
-                    optionFile = int(input())
-                    print("\nScegli una peer: ")
-                    optionPeer = int(input())
+                    optionFile = int(input("\nScegli una file: "))
+                    optionPeer = int(input("\nScegli una peer: "))
                     fileNameDownload = searchedFiles[optionFile -1].fileName.replace(' ', '')
                     downloadMD5 = searchedFiles[optionFile -1].MD5
                     serverDownload = searchedFiles[optionFile - 1].peers[optionPeer - 1] 

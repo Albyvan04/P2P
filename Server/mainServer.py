@@ -17,6 +17,7 @@ while True:
 
     clientSocket, clientAddress = s.accept()
     print("Richiesta accettata")
+    print(clientSocket.getsockname())
 
     pid = os.fork()
     if(pid == 0):
@@ -88,12 +89,12 @@ while True:
 
         #region LOGOUT
         elif(request[0:4] == "LOGO"): #logout
-          print(">%s", request)
+          #print(">%s", request)
 
           #elaborazione della richiesta
           nDelete, bol = Server.logout(request)
-          print(nDelete)
-          print(bol)
+          #print(nDelete)
+          #print(bol)
           if(bol == True):
             print("Logout effettuato")
             #risposta al client
@@ -114,6 +115,6 @@ while True:
         #endregion
 
       print("Connessione chiusa\n")
-      clientSocket.close()
-      os._exit(1)
+    clientSocket.close()
+    os._exit(1)
 
