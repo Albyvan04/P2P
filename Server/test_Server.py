@@ -11,16 +11,19 @@ from ctypes import sizeof
 import time
 
 class TestDownload(unittest.TestCase): #FUNZIONA
+
     def test_get_sessionID(self):
         download = Download("2394be2e1263dcd5b566494fa5d11359", "c26679467622336004c6b6a86a91248c")
         sessionID = download.sessionId
         self.assertEqual(sessionID, "2394be2e1263dcd5b566494fa5d11359", "Should be 2394be2e1263dcd5b566494fa5d11359")
+
     def test_get_md5file(self):
         download = Download("2394be2e1263dcd5b566494fa5d11359", "c26679467622336004c6b6a86a91248c")
         md5 = download.md5file
         self.assertEqual(md5, "c26679467622336004c6b6a86a91248c", "Should be c26679467622336004c6b6a86a91248c")
 
 class TestFile(unittest.TestCase): #FUNZIONA
+
     def test_get_md5(self):
         file = File("mainServer.py", "0ffd3669ab8f43d37f5d64e292666431")
         result = file.get_md5()
@@ -33,6 +36,7 @@ class TestFile(unittest.TestCase): #FUNZIONA
         self.assertEqual(result, True, "Should be True")
 
 class TestLog(unittest.TestCase):
+
     def test_log(self):
         sessionID = "a"
         tipo_operazione = "login"
@@ -43,6 +47,7 @@ class TestLog(unittest.TestCase):
         self.assertEqual(log.tipo_operazione, tipo_operazione, "Should be login")
 
 class TestServer(unittest.TestCase):
+    
     def test_login(self):
        request = "LOGI192.168.000.00100080"
        result, bol = Server.login(request)

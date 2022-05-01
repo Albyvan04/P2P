@@ -104,7 +104,6 @@ if(pid != 0):
                 request = "RETR" + downloadMD5
                 socketDownload.send(request.encode())
 
-
                 fd = open("receivedFiles/" + fileNameDownload, "wb")
 
                 print("Ricezione di %s" % fileNameDownload)
@@ -182,8 +181,6 @@ else:
                         break
 
                     chunks = chunks + str('%05d' % len(buf)).encode() + buf
-                    #print(str(len(chunks)) + "\n")
-                    #print(chunks)
                     
                     chunkNumber += 1
                 

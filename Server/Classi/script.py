@@ -72,9 +72,9 @@ except Exception as ex:
     print("%s" %ex)
 
 
-#########################
-# CREAZIONE FILE JSON DB#
-#########################
+##########################
+# CREAZIONE FILE JSON DB #
+##########################
 #filename = "query.json"
 
 #jsonObject = {

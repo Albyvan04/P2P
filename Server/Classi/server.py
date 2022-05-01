@@ -97,7 +97,6 @@ class Server:
     def searchFile(request):
         sessionId = request[4:20]
         ricercato = request[20:40].replace(' ', '')
-        #print(ricercato)
 
         orm = ORM()
 
@@ -139,12 +138,6 @@ class Server:
 
                 for file in files:
 
-                    # print("ID = %s\t\t", row[0])
-                    # print("Filename = %s\t\t", row[3])
-                    # print("MD5 = %s\t\t", row[1])
-                    # print("SessionId = %s\t\t", row[2])
-                    # print("Copia = %s\t\t", row[4])
-
                     request += file.MD5 + file.fileName + '%03d' % len(file.peers)
 
                     for peer in file.peers:
@@ -165,13 +158,13 @@ class Server:
             #conto il numero di file associati a quel peer per restituirlo in risposta
             nFile = orm.countFile(sessionId)
             print("Numero file condivisi: %d"%nFile)
+
             #elimino i file di quel peer
             orm.deleteAllFile(sessionId)
             if nFile <= 0:
                 print("Il peer non ha condiviso nessun file")
             else:
                 print("Sono stati rimossi %d file" %nFile)
-            #print("Numero file eliminati: %d" %nDelete)
             
             #creo il log
             l = Log(sessionId, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
@@ -195,7 +188,7 @@ class Server:
             peer = orm.selectPPeer(ip, port)
             id_file = orm.selectIDfile(peer.session_id, md5_file)
             orm.addDownload(sessionID, id_file)
-            nDownload = orm.countDownload(md5_file)
+            nDownload = orm.countDownload(id_file)
             l = Log(sessionID, Tipo_Operazione.DownloadFile, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
             orm.addLog(l)
             return nDownload, True   

@@ -42,14 +42,12 @@ class ORM:
             print(ex.__str__())
 
     def selectPPeer(self, ip, port):
-        print(ip)
-        print(port)
         query = "SELECT * FROM peer WHERE ip_peer = '%s' AND port_peer = %d" %(ip, int(port))
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
             peer = cursor.fetchone()
-            peer = Peer(peer["session_id"], peer["ip_peer"], peer["port_peer"])
+            peer = Peer(peer[0], peer[1], peer[2])
             return peer
         except Exception as ex:
             print(ex.__str__())
@@ -78,8 +76,6 @@ class ORM:
         try:
             cursor.execute(query)
             print("Peer rimosso correttamente")
-            #l = Log(sessionID, Tipo_Operazione.Logout, time.strftime("%d/%m/%Y"), time.strftime("%H:%M:%S"))
-            #self.addLog(l)
         except Exception as ex:
             print(ex.__str__())
 
@@ -116,7 +112,6 @@ class ORM:
 
     def selectfile(self, filename):
         query = "SELECT * FROM file WHERE filename LIKE '%" + filename + "%'"
-        #print(query)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -135,18 +130,9 @@ class ORM:
         try:
             cursor.execute(query)
             id = cursor.fetchone()
-            #print(id)
-            return id
+            return id[0]
         except Exception as ex:
             print(ex.__str__())
-
-    # def updateFile(self, newFilename, newFilepath, md5_File):
-    #     query = "UPDATE file SET filename = %s, filepath = %s WHERE md5_file = %s" %(newFilename, newFilepath, md5_File)
-    #     cursor = self.connection.cursor()
-    #     try:
-    #         cursor.execute(query)
-    #     except Exception as ex:
-    #         print(ex.__str__())
     
     def deleteFile(self, sessionId, md5_file):
         query = "DELETE FROM file WHERE session_id = '%s' AND md5_file = '%s'" %(sessionId, md5_file)
@@ -218,12 +204,12 @@ class ORM:
         except Exception as ex:
             print("orm", ex.__str__())
 
-    def countDownload(self, md5_file):
-        query = "SELECT COUNT(*) FROM download WHERE md5_file = '%s'" %md5_file
+    def countDownload(self, id_file):
+        query = "SELECT COUNT(*) FROM download WHERE id_file = '%s'" %id_file
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            return cursor.fetchone()
+            return cursor.fetchone()[0]
         except Exception as ex:
             print(ex.__str__())
     #endregion

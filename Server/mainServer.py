@@ -28,8 +28,6 @@ while True:
 
         request = str(clientSocket.recv(4096).decode())
 
-        #print(len(request.encode()))        
-
         #region LOGIN
         if(request[0:4] == "LOGI"): #login
 
@@ -41,7 +39,6 @@ while True:
 
             #risposta del server
             clientSocket.send(("ALGI" + peer.session_id).encode())
-          #clientSocket.send(("ALGI" + Utilities.generateSessionID()).encode())
 
           else:
             clientSocket.send(("ALGI" + "0000000000000000").encode())
@@ -76,33 +73,37 @@ while True:
             #risposta del server
           else:
             print("Problema con la rimozione del file")
+
           clientSocket.send(("ADEL").encode() + ('%03d' % nCopie).encode())
 
         #endregion
 
         #region FIND FILE
         elif(request[0:4] == "FIND"):
+
           request = Server.searchFile(request)
-          #restituire il pacchetto
+
           clientSocket.send(request.encode())
         #endregion
 
         #region LOGOUT
         elif(request[0:4] == "LOGO"): #logout
-          #print(">%s", request)
-
           #elaborazione della richiesta
           nDelete, bol = Server.logout(request)
-          #print(nDelete)
-          #print(bol)
+
           if(bol == True):
             print("Logout effettuato")
+
             #risposta al client
             clientSocket.send(("ALGO").encode() + ('%03d' % nDelete).encode())
             continueCicle = False
+
             clientSocket.close()
           else:
             print("Logout fallito")
+        #endregion
+
+        #region DOWNLOAD_REGISTRATION
 
         elif(request[0:4] == "RREG"):
           result, bol = Server.reg_download(request)
@@ -115,6 +116,6 @@ while True:
         #endregion
 
       print("Connessione chiusa\n")
-    clientSocket.close()
-    os._exit(1)
+      clientSocket.close()
+      os._exit(1)
 
