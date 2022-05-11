@@ -47,7 +47,7 @@ class Server:
         orm = ORM()
 
         try:
-            if (orm.selectIDfile(session_id, md5_file) != None):
+            if (orm.selectIDfile(session_id, md5_file)):
                 orm.deleteFile(session_id, md5_file)
 
             #mi prelevo l'ultima copia aggiunta

@@ -39,6 +39,7 @@ class ORM:
             cursor.execute(query)
             print("Peer aggiunto correttamente")
         except Exception as ex:
+            print("Aaaaa")
             print(ex.__str__())
 
     def selectPPeer(self, ip, port):
@@ -103,7 +104,7 @@ class ORM:
 
     #region FILE
     def addFile(self, md5_File, sessionId, filename, copia):
-        query = "INSERT INTO file (md5_file, filename, session_id, copia) VALUES('%s', '%s', '%s', '%s')" %(md5_File, filename, sessionId, copia)
+        query = "INSERT INTO file (md5_file, filename, session_id, copia) VALUES('%s', '%s', '%s', %s)" %(md5_File, filename, sessionId, copia)
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
@@ -116,23 +117,25 @@ class ORM:
         try:
             cursor.execute(query)
             lista = cursor.fetchall()
+
             if(len(lista) != 0):
                 return lista, True
             else:
                 return lista, False
         except Exception as ex:
             print(ex.__str__())
+        print("bbbbbb")
         return None, False
 
     def selectIDfile(self, sessionID, md5_file):
         query = "SELECT id FROM file WHERE session_id = '%s' and md5_file = '%s'" %(sessionID, md5_file)
         cursor = self.connection.cursor()
-        try:
-            cursor.execute(query)
-            id = cursor.fetchone()
-            return id[0]
-        except Exception as ex:
-            print(ex.__str__())
+        #try:
+        cursor.execute(query)
+        return cursor.fetchone()
+     
+        #except Exception as ex:
+            #print(ex.__str__())
     
     def deleteFile(self, sessionId, md5_file):
         query = "DELETE FROM file WHERE session_id = '%s' AND md5_file = '%s'" %(sessionId, md5_file)
@@ -157,7 +160,7 @@ class ORM:
     def selectPeerFile(self, sessionID):
         query = "SELECT * FROM file WHERE session_id = '%s'" %(sessionID)
         cursor = self.connection.cursor()
-        try:
+        try:    
             cursor.execute(query)
 
             md5list = []
@@ -173,14 +176,11 @@ class ORM:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query)
-            copie = cursor.fetchone()
-            if copie[0] == None:
-                return -1
-            else:
-                return copie[0]
+            return cursor.fetchone()[0] or -1
+               
         except Exception as ex:
             print(ex.__str__())
-        return -1
+            return -1
 
     def countFile(self, sessionId):
         query = "SELECT COUNT(*) FROM file WHERE session_id = '%s'" %sessionId
