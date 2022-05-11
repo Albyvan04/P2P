@@ -1,4 +1,5 @@
 import os
+from pydoc import cli
 import socket
 from Classi.server import Server
 from Classi.utilitiesServer import Utilities
@@ -17,7 +18,7 @@ while True:
 
     clientSocket, clientAddress = s.accept()
     print("Richiesta accettata")
-    print(clientSocket.getsockname())
+    print(clientAddress)
 
     pid = os.fork()
     if(pid == 0):
